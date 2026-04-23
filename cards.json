@@ -1,0 +1,23 @@
+{
+  "meta": { "version": 1, "sprache": "de" },
+  "themen": [
+    {
+      "id": "thema-wbl",
+      "name": "WBL",
+      "karten": [
+        {
+          "id": "k-001",
+          "frage": "Was versteht man unter dem Prinzip der Wirtschaftlichkeit?",
+          "antwort": "Mit minimalem Einsatz einen maximalen Nutzen erzielen (Minimal- oder Maximalprinzip).",
+          "stichworte": ["Wirtschaftlichkeit", "Minimalprinzip", "Maximalprinzip", "Nutzen"],
+          "falschantworten": [
+            "Den Gewinn durch Preiserhöhungen maximieren.",
+            "Alle Ressourcen vollständig verbrauchen.",
+            "Kosten und Erträge stets gleich halten."
+          ],
+          "schwierigkeit": "mittel"
+        }
+      ]
+    }
+  ]
+}
