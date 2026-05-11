@@ -2412,6 +2412,91 @@ Selbstverbrauch PV                                              = Z3L − Z1L</p
       </div>
     </div>
 
+
+    <!-- LEITUNGSDIMENSIONIERUNG -->
+    <div id="leitungsdim" class="section">
+      <div class="content-h2">📐 Leitungsdimensionierung — Formeln & Tabellen</div>
+
+      <div class="box box-info">
+        <div class="box-title">ℹ️ Grundprinzip</div>
+        Der Querschnitt wird nach <strong>zwei Kriterien</strong> ermittelt — maßgebend ist der <strong>größere</strong> der beiden Werte:<br>
+        1. Strombelastbarkeit (Iz ≥ Ib aus Tabelle)<br>
+        2. Spannungsfall (ΔU ≤ 3 % bei Wallboxen)
+      </div>
+
+      <div class="content-h3">1. Bemessungsstrom Ib</div>
+      <div class="tbl-wrap"><table>
+        <tr><th>Netz</th><th>Formel</th><th>Beispiel 11-kW-Wallbox</th></tr>
+        <tr><td>Einphasig (230 V)</td><td>I<sub>b</sub> = P / (U · cos φ)</td><td>—</td></tr>
+        <tr><td>Dreiphasig (400 V)</td><td>I<sub>b</sub> = P / (√3 · U<sub>n</sub> · cos φ)</td><td>11 000 / (1,732 · 400 · 1) = <strong>15,9 A</strong></td></tr>
+      </table></div>
+
+      <div class="content-h3">2. Spannungsfall ΔU</div>
+      <div class="tbl-wrap"><table>
+        <tr><th>Netz</th><th>Formel</th></tr>
+        <tr><td>Einphasig</td><td>ΔU = 2 · I · l · ρ / A</td></tr>
+        <tr><td>Dreiphasig</td><td>ΔU = √3 · I · l · ρ / A</td></tr>
+        <tr><td>Prozent</td><td>ΔU% = ΔU / U<sub>n</sub> · 100</td></tr>
+      </table></div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Grenzwert Wallbox</div>
+        Max. <strong>3 %</strong> Spannungsfall zulässig → bei 400 V = <strong>12 V</strong>
+      </div>
+
+      <div class="content-h3">3. Mindestquerschnitt aus Spannungsfall</div>
+      <div class="tbl-wrap"><table>
+        <tr><th>Netz</th><th>Formel</th></tr>
+        <tr><td>Einphasig</td><td>A = 2 · ρ · l · I / ΔU<sub>max</sub></td></tr>
+        <tr><td>Dreiphasig</td><td>A = √3 · ρ · l · I / ΔU<sub>max</sub></td></tr>
+        <tr><td>Vereinfacht (κ)</td><td>A = 2 · l · I / (κ · ΔU<sub>max</sub>)</td></tr>
+      </table></div>
+
+      <div class="content-h3">4. Materialkonstanten</div>
+      <div class="tbl-wrap"><table>
+        <tr><th>Material</th><th>ρ (Ω·mm²/m)</th><th>κ (m/Ω·mm²)</th></tr>
+        <tr><td>Kupfer (Cu)</td><td>0,0178</td><td>56</td></tr>
+        <tr><td>Aluminium (Al)</td><td>0,0290</td><td>34</td></tr>
+      </table></div>
+
+      <div class="content-h3">5. Leitungswiderstand</div>
+      <div class="tbl-wrap"><table>
+        <tr><th>Formel</th><th>Bedeutung</th></tr>
+        <tr><td>R = ρ · l / A</td><td>Widerstand einer Ader [Ω]</td></tr>
+        <tr><td>R = l / (κ · A)</td><td>Alternative mit κ</td></tr>
+      </table></div>
+
+      <div class="content-h3">6. Strombelastbarkeit — Tabelle nach VDE 0298-4</div>
+      <p style="font-size:0.82rem;color:var(--text2);margin-bottom:0.75rem">Verlegeart B2 (Kabel in Rohr im Mauerwerk) · PVC-Isolation · Kupferleiter</p>
+
+      <div class="tbl-wrap"><table>
+        <tr><th>Querschnitt</th><th>Iz bei 25 °C (A)</th><th>Iz bei 30 °C (A)</th><th>Typische Anwendung</th></tr>
+        <tr><td>1,5 mm²</td><td>16</td><td>15</td><td>Beleuchtung, Kleinverbraucher</td></tr>
+        <tr><td>2,5 mm²</td><td>22</td><td>21</td><td>Steckdosen, kleine Verbraucher</td></tr>
+        <tr><td>4 mm²</td><td>30</td><td>28</td><td>Herd-Einzelstromkreis</td></tr>
+        <tr><td>6 mm²</td><td>38</td><td>36</td><td>Wallbox bis ~8 kW (einphasig)</td></tr>
+        <tr><td>10 mm²</td><td>53</td><td>50</td><td>Wallbox 11 kW (dreiphasig)</td></tr>
+        <tr><td>16 mm²</td><td>70</td><td>66</td><td>Wallbox 22 kW (dreiphasig)</td></tr>
+        <tr><td>25 mm²</td><td>89</td><td>84</td><td>Unterverteilung, große Wallbox</td></tr>
+        <tr><td>35 mm²</td><td>110</td><td>104</td><td>Hauptleitungen</td></tr>
+        <tr><td>50 mm²</td><td>130</td><td>123</td><td>Hausanschluss</td></tr>
+      </table></div>
+
+      <div class="box box-tip">
+        <div class="box-title">💡 Korrekturfaktor Umgebungstemperatur</div>
+        30 °C → 25 °C: Faktor <strong>1,06</strong> (höhere Belastbarkeit bei niedrigerer Umgebungstemperatur)<br>
+        Formel: f = √((T<sub>max</sub> − T<sub>amb</sub>) / (T<sub>max</sub> − 30)) mit T<sub>max</sub> = 70 °C (PVC)
+      </div>
+
+      <div class="content-h3">7. Rechenbeispiel — 11-kW-Wallbox, 30 m Leitungslänge</div>
+      <div class="box" style="border-color:var(--accent);background:rgba(88,166,255,0.05)">
+        <strong>Gegeben:</strong> P = 11 kW · U = 400 V · cos φ = 1 · l = 30 m · Cu · Verlegeart B2 · 30 °C<br><br>
+        <strong>1. Bemessungsstrom:</strong> Ib = 11 000 / (1,732 × 400 × 1) = <strong>15,9 A</strong><br>
+        <strong>2. Querschnitt aus Tabelle:</strong> Iz ≥ 15,9 A → <strong>2,5 mm² (21 A)</strong> ✓<br>
+        <strong>3. Spannungsfall prüfen:</strong> ΔU = 1,732 × 15,9 × 30 × 0,0178 / 2,5 = <strong>5,9 V = 1,47 %</strong> ✓ (≤ 3 %)<br>
+        <strong>Ergebnis:</strong> 2,5 mm² Cu ausreichend — Spannungsfall und Strombelastbarkeit eingehalten.
+      </div>
+    </div>
   </main>
 </div>
 
@@ -3532,5 +3617,6 @@ function pkRetry(){
 </script>
 </body>
 </html>
+
 
 
