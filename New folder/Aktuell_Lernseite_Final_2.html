@@ -1,0 +1,2857 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT-Lernseite: Gebäudeautomation & Netzwerktechnik</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap');
+
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #3fb950;
+  --warn: #f85149;
+  --gold: #e3b341;
+  --purple: #bc8cff;
+  --teal: #39d353;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* HEADER */
+.site-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.site-header h1 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--mono);
+  letter-spacing: -0.02em;
+}
+
+.header-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#searchInput {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  width: 220px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#searchInput:focus { border-color: var(--accent); }
+
+/* LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 56px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text2);
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+  font-family: var(--mono);
+}
+
+.sidebar-link {
+  display: block;
+  padding: 0.4rem 1rem;
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 0.82rem;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+.sidebar-link:hover, .sidebar-link.active {
+  color: var(--accent);
+  background: rgba(88,166,255,0.06);
+  border-left-color: var(--accent);
+}
+
+/* MAIN */
+.main {
+  padding: 2rem;
+  max-width: 900px;
+}
+
+/* SECTIONS */
+.section {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.section.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #0d1117 0%, #1c2a3a 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(88,166,255,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+.hero h2 span { color: var(--accent); }
+.hero p {
+  color: var(--text2);
+  font-size: 0.95rem;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.topic-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.topic-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(88,166,255,0.15);
+}
+.topic-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.topic-card h3 { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.topic-card p { font-size: 0.75rem; color: var(--text2); margin-top: 0.25rem; }
+
+/* CONTENT BLOCKS */
+.content-h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.content-h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 1.5rem 0 0.75rem;
+}
+
+.content-p {
+  color: var(--text2);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+/* BOXES */
+.box {
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  border-left: 3px solid;
+}
+.box-info { background: rgba(88,166,255,0.08); border-color: var(--accent); color: #cdd9e5; }
+.box-warn { background: rgba(248,81,73,0.08); border-color: var(--warn); color: #cdd9e5; }
+.box-tip { background: rgba(63,185,80,0.08); border-color: var(--accent2); color: #cdd9e5; }
+.box-gold { background: rgba(227,179,65,0.08); border-color: var(--gold); color: #cdd9e5; }
+
+.box-title {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* TABLES */
+.tbl-wrap { overflow-x: auto; margin: 1rem 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  font-family: var(--mono);
+}
+th {
+  background: var(--bg3);
+  color: var(--accent);
+  padding: 0.6rem 0.875rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+td {
+  padding: 0.55rem 0.875rem;
+  border-bottom: 1px solid rgba(48,54,61,0.5);
+  color: var(--text2);
+  vertical-align: top;
+}
+tr:hover td { background: rgba(88,166,255,0.04); color: var(--text); }
+td:first-child { color: var(--text); font-weight: 600; }
+
+/* CODE */
+code {
+  font-family: var(--mono);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.82em;
+  color: var(--teal);
+}
+pre {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--teal);
+  margin: 0.75rem 0;
+}
+
+/* ACCORDION */
+.accordion {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 0.75rem 0;
+  overflow: hidden;
+}
+.accordion-header {
+  padding: 0.875rem 1.25rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg3);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.15s;
+  user-select: none;
+}
+.accordion-header:hover { background: rgba(88,166,255,0.1); }
+.accordion-header .chevron {
+  transition: transform 0.3s;
+  color: var(--text2);
+  font-size: 0.75rem;
+}
+.accordion.open .chevron { transform: rotate(180deg); }
+.accordion-body {
+  display: none;
+  padding: 1.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.accordion.open .accordion-body { display: block; }
+
+/* QUIZ */
+.quiz-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1.25rem 0;
+}
+.quiz-q {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+.quiz-q .q-num {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 4px;
+  padding: 0.1rem 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.quiz-opt {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  text-align: left;
+  color: var(--text);
+}
+.quiz-opt:hover { border-color: var(--accent); background: rgba(88,166,255,0.08); }
+.quiz-opt.correct { border-color: var(--accent2); background: rgba(63,185,80,0.12); color: var(--accent2); }
+.quiz-opt.wrong { border-color: var(--warn); background: rgba(248,81,73,0.1); color: var(--warn); }
+.quiz-opt.disabled { cursor: default; pointer-events: none; }
+
+.quiz-feedback {
+  display: none;
+  margin-top: 0.875rem;
+  padding: 0.875rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); }
+.quiz-feedback.wrong { background: rgba(248,81,73,0.08); border: 1px solid rgba(248,81,73,0.25); }
+
+/* EXAM TASKS */
+.task-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+.task-header {
+  background: var(--bg3);
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.task-header h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.task-pts {
+  background: rgba(227,179,65,0.15);
+  color: var(--gold);
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.task-body { padding: 1.25rem; }
+.task-question {
+  background: rgba(88,166,255,0.05);
+  border: 1px solid rgba(88,166,255,0.2);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.show-answer-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: var(--mono);
+  transition: all 0.2s;
+  margin-bottom: 0.75rem;
+}
+.show-answer-btn:hover { background: rgba(88,166,255,0.1); border-color: var(--accent); }
+
+.answer-block {
+  display: none;
+}
+.answer-block.visible { display: block; }
+
+.answer-content {
+  background: rgba(63,185,80,0.05);
+  border: 1px solid rgba(63,185,80,0.2);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text2);
+}
+.answer-content strong { color: var(--accent2); }
+.answer-content .formula {
+  display: block;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--gold);
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  background: var(--bg3);
+  border-radius: 4px;
+}
+
+/* VOCAB */
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.vocab-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+.vocab-item:hover { border-color: var(--accent); }
+.vocab-term {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+.vocab-def {
+  font-size: 0.8rem;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+.vocab-example {
+  font-size: 0.75rem;
+  color: var(--teal);
+  font-family: var(--mono);
+  padding: 0.3rem 0.5rem;
+  background: rgba(57,211,83,0.07);
+  border-radius: 4px;
+}
+.vocab-trap {
+  font-size: 0.75rem;
+  color: var(--warn);
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  background: rgba(248,81,73,0.07);
+  border-radius: 4px;
+}
+
+/* LEARN MODE */
+.learn-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+.learn-q { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; line-height: 1.5; }
+.learn-a-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: var(--sans);
+  margin-bottom: 1rem;
+  transition: all 0.2s;
+}
+.learn-a-btn:hover { border-color: var(--accent); background: rgba(88,166,255,0.08); }
+.learn-answer { display: none; padding: 1rem; background: var(--bg3); border-radius: 8px; margin: 1rem 0; font-size: 0.875rem; color: var(--text2); line-height: 1.6; text-align: left; }
+.learn-answer.show { display: block; }
+.learn-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.learn-btn-know {
+  background: rgba(63,185,80,0.15);
+  border: 1px solid rgba(63,185,80,0.4);
+  color: var(--accent2);
+  border-radius: 6px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: var(--sans);
+  transition: all 0.2s;
+}
+.learn-btn-repeat {
+  background: rgba(248,81,73,0.1);
+  border: 1px solid rgba(248,81,73,0.35);
+  color: var(--warn);
+  border-radius: 6px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: var(--sans);
+  transition: all 0.2s;
+}
+.learn-btn-exam {
+  background: rgba(227,179,65,0.1);
+  border: 1px solid rgba(227,179,65,0.35);
+  color: var(--gold);
+  border-radius: 6px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: var(--sans);
+  transition: all 0.2s;
+}
+.learn-progress {
+  background: var(--border);
+  border-radius: 4px;
+  height: 4px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+.learn-progress-bar {
+  background: var(--accent);
+  height: 100%;
+  transition: width 0.3s;
+}
+.learn-counter { font-family: var(--mono); font-size: 0.75rem; color: var(--text2); margin-bottom: 1rem; }
+
+/* STATS BADGES */
+.stats-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat-badge {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-family: var(--mono);
+}
+.stat-badge span { font-weight: 700; color: var(--accent); }
+
+/* SEARCH HIGHLIGHT */
+.highlight { background: rgba(227,179,65,0.35); border-radius: 2px; }
+
+/* PROBEEXAM */
+.exam-score {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.score-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  text-align: center;
+}
+.score-item .num { font-size: 1.75rem; font-weight: 800; font-family: var(--mono); color: var(--gold); }
+.score-item .lbl { font-size: 0.72rem; color: var(--text2); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 1rem; }
+}
+
+/* ── PROBEKLAUSUR INLINE-EXAM STYLES ── */
+.pk-tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:1.5rem; }
+.pk-tab { padding:.5rem 1.4rem; font-size:.83rem; font-weight:600; color:var(--text2); cursor:pointer; border-bottom:2px solid transparent; background:none; border-top:none; border-left:none; border-right:none; font-family:var(--sans); transition:all .15s; }
+.pk-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.pk-tab.exam-tab.active { color:var(--warn); border-bottom-color:var(--warn); }
+.pk-panel { display:none; }
+.pk-panel.active { display:block; }
+
+/* timer bar inside section */
+.pk-timerbar { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:.75rem 1.25rem; margin-bottom:1.5rem; display:flex; align-items:center; gap:12px; }
+.pk-timer-num { font-family:var(--mono); font-size:1.25rem; font-weight:700; color:#fff; min-width:70px; transition:color .3s; }
+.pk-timer-num.warn { color:var(--gold); }
+.pk-timer-num.danger { color:var(--warn); animation:pk-pulse 1s infinite; }
+@keyframes pk-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pk-timer-track { flex:1; height:5px; background:var(--bg3); border-radius:3px; overflow:hidden; }
+.pk-timer-fill { height:100%; background:var(--accent); border-radius:3px; transition:width 1s linear,background .5s; }
+.pk-timer-fill.warn { background:var(--gold); }
+.pk-timer-fill.danger { background:var(--warn); }
+.pk-answered { font-family:var(--mono); font-size:.72rem; color:var(--text2); white-space:nowrap; }
+.pk-submit-btn { padding:.38rem 1rem; background:var(--accent2); color:#000; border:none; border-radius:6px; font-family:var(--sans); font-size:.78rem; font-weight:700; cursor:pointer; white-space:nowrap; transition:all .15s; }
+.pk-submit-btn:hover { background:#56e88d; }
+
+/* start card */
+.pk-start { max-width:640px; }
+.pk-start-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:2.5rem; position:relative; overflow:hidden; }
+.pk-start-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.pk-start-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(248,81,73,.12); border:1px solid rgba(248,81,73,.3); color:var(--warn); border-radius:6px; font-family:var(--mono); font-size:.67rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:.25rem .7rem; margin-bottom:1.1rem; }
+.pk-start-h1 { font-size:1.55rem; font-weight:800; line-height:1.2; margin-bottom:.35rem; }
+.pk-start-h1 span { color:var(--accent); }
+.pk-start-sub { color:var(--text2); font-size:.85rem; margin-bottom:1.75rem; }
+.pk-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; margin-bottom:1.75rem; }
+.pk-info-item { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:.8rem 1rem; }
+.pk-info-lbl { font-size:.62rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:.08em; color:var(--text2); margin-bottom:.2rem; }
+.pk-info-val { font-size:.92rem; font-weight:600; }
+.pk-info-val em { color:var(--accent); font-style:normal; }
+.pk-rules { border:1px solid var(--border); border-radius:8px; padding:.9rem 1.1rem; margin-bottom:1.5rem; }
+.pk-rules h3 { font-size:.7rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--text2); margin-bottom:.55rem; }
+.pk-rule { font-size:.82rem; color:var(--text2); padding:.2rem 0; display:flex; gap:8px; }
+.pk-rule::before { content:'→'; color:var(--accent); flex-shrink:0; }
+.pk-name-inp { width:100%; padding:.6rem .9rem; background:var(--bg3); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:var(--sans); font-size:.88rem; outline:none; transition:border-color .15s; margin-bottom:1.1rem; }
+.pk-name-inp:focus { border-color:var(--accent); }
+.pk-name-inp::placeholder { color:var(--text2); }
+.pk-go { width:100%; padding:.85rem; background:var(--accent); color:#000; border:none; border-radius:8px; font-family:var(--sans); font-size:.92rem; font-weight:700; cursor:pointer; transition:all .2s; }
+.pk-go:hover { background:var(--teal); transform:translateY(-1px); }
+
+/* question nav */
+.pk-qnav { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:1.25rem; }
+.pk-qdot { width:29px; height:29px; border-radius:5px; border:1px solid var(--border); background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:.67rem; font-family:var(--mono); font-weight:600; cursor:pointer; color:var(--text2); transition:all .15s; }
+.pk-qdot:hover { border-color:var(--accent); color:var(--accent); }
+.pk-qdot.ans { background:var(--accent); border-color:var(--accent); color:#000; }
+.pk-qdot.ok { background:var(--accent2); border-color:var(--accent2); color:#000; }
+.pk-qdot.bad { background:var(--warn); border-color:var(--warn); color:#fff; }
+
+/* section header */
+.pk-sec-hd { display:flex; align-items:center; gap:10px; background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:.8rem 1.1rem; margin:2rem 0 1rem; }
+.pk-sec-hd h3 { font-size:.87rem; font-weight:700; }
+.pk-sec-hd .sp { margin-left:auto; font-family:var(--mono); font-size:.7rem; color:var(--gold); background:rgba(227,179,65,.1); border:1px solid rgba(227,179,65,.2); border-radius:4px; padding:.15rem .55rem; }
+
+/* question cards */
+.pk-qcard { background:var(--bg2); border:1px solid var(--border); border-radius:10px; margin-bottom:.9rem; overflow:hidden; transition:border-color .2s; }
+.pk-qcard.answered { border-left:3px solid var(--accent); }
+.pk-qcard-head { padding:.85rem 1.1rem .7rem; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; gap:9px; }
+.pk-qnum { background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:.18rem .5rem; font-family:var(--mono); font-size:.67rem; font-weight:700; flex-shrink:0; margin-top:2px; }
+.pk-qtype { border-radius:4px; padding:.18rem .5rem; font-family:var(--mono); font-size:.64rem; flex-shrink:0; margin-top:2px; }
+.pk-qtype.mc { background:rgba(88,166,255,.1); border:1px solid rgba(88,166,255,.22); color:var(--accent); }
+.pk-qtype.rc { background:rgba(227,179,65,.1); border:1px solid rgba(227,179,65,.22); color:var(--gold); }
+.pk-qpts { margin-left:auto; font-family:var(--mono); font-size:.69rem; color:var(--text2); flex-shrink:0; }
+.pk-qtext { font-size:.86rem; line-height:1.65; flex:1; white-space:pre-wrap; }
+.pk-qsub { font-size:.79rem; color:var(--text2); margin-top:.45rem; background:var(--bg3); border:1px solid var(--border); border-radius:5px; padding:.6rem .8rem; white-space:pre-wrap; line-height:1.6; }
+.pk-qbody { padding:.8rem 1.1rem; }
+
+/* mc options */
+.pk-opts { display:flex; flex-direction:column; gap:.45rem; }
+.pk-opt { display:flex; align-items:flex-start; gap:9px; padding:.6rem .85rem; border:1px solid var(--border); border-radius:7px; cursor:pointer; transition:all .15s; font-size:.84rem; line-height:1.45; color:var(--text2); }
+.pk-opt:hover { border-color:var(--accent); color:var(--text); background:rgba(88,166,255,.06); }
+.pk-opt.sel { border-color:var(--accent); background:rgba(88,166,255,.12); color:var(--text); }
+.pk-opt.sel .pk-ok { background:var(--accent); border-color:var(--accent); color:#000; }
+.pk-opt.res-ok { border-color:var(--accent2); background:rgba(63,185,80,.1); color:var(--accent2); pointer-events:none; }
+.pk-opt.res-bad { border-color:var(--warn); background:rgba(248,81,73,.08); color:var(--warn); pointer-events:none; }
+.pk-opt.res-dim { opacity:.38; pointer-events:none; }
+.pk-ok { width:21px; height:21px; flex-shrink:0; border-radius:4px; border:1px solid var(--border); background:var(--bg3); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:.67rem; font-weight:700; margin-top:1px; transition:all .15s; }
+
+/* calc inputs */
+.pk-calc-area { display:flex; flex-direction:column; gap:.7rem; }
+.pk-calc-f { display:flex; flex-direction:column; gap:.28rem; }
+.pk-calc-lbl { font-size:.72rem; font-family:var(--mono); color:var(--text2); }
+.pk-calc-inp { width:100%; padding:.58rem .85rem; background:var(--bg3); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:var(--mono); font-size:.88rem; outline:none; transition:border-color .15s; }
+.pk-calc-inp:focus { border-color:var(--gold); }
+.pk-calc-inp::placeholder { color:#3a4355; }
+.pk-calc-inp.res-ok { border-color:var(--accent2); background:rgba(63,185,80,.05); }
+.pk-calc-inp.res-bad { border-color:var(--warn); background:rgba(248,81,73,.05); }
+.pk-calc-hint { font-size:.73rem; color:var(--text2); font-style:italic; padding:.28rem .55rem; border-left:2px solid var(--border); }
+
+/* results */
+.pk-result-hero { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:2.25rem; margin-bottom:1.5rem; text-align:center; position:relative; overflow:hidden; }
+.pk-result-hero::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; }
+.pk-result-hero.pass::before { background:linear-gradient(90deg,var(--accent2),var(--teal)); }
+.pk-result-hero.fail::before { background:linear-gradient(90deg,var(--warn),#ff8c42); }
+.pk-rpts { font-size:3.2rem; font-weight:800; font-family:var(--mono); line-height:1; margin-bottom:.35rem; }
+.pk-rpts.pass { color:var(--accent2); }
+.pk-rpts.fail { color:var(--warn); }
+.pk-rgrade { font-size:1.2rem; font-weight:700; margin-bottom:.3rem; }
+.pk-rmsg { color:var(--text2); font-size:.87rem; }
+.pk-rname { font-family:var(--mono); font-size:.73rem; color:var(--text2); margin-top:.65rem; }
+.pk-rgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:.65rem; margin-bottom:1.5rem; }
+.pk-rchip { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:.8rem; }
+.pk-rchip-n { font-size:1.4rem; font-weight:700; font-family:var(--mono); }
+.pk-rchip-l { font-size:.63rem; color:var(--text2); margin-top:.18rem; text-transform:uppercase; letter-spacing:.06em; font-family:var(--mono); }
+.pk-sec-res { background:var(--bg2); border:1px solid var(--border); border-radius:10px; margin-bottom:.9rem; overflow:hidden; }
+.pk-sec-res-hd { padding:.75rem 1.1rem; background:var(--bg3); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.pk-sec-res-hd h3 { font-size:.84rem; font-weight:700; }
+.pk-sec-res-score { font-family:var(--mono); font-size:.79rem; font-weight:700; }
+.pk-qr-item { padding:.85rem 1.1rem; border-bottom:1px solid rgba(42,51,71,.4); }
+.pk-qr-item:last-child { border-bottom:none; }
+.pk-qr-row { display:flex; align-items:flex-start; gap:9px; margin-bottom:.38rem; }
+.pk-qr-ico { width:19px; height:19px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:700; flex-shrink:0; margin-top:1px; }
+.pk-qr-ico.ok { background:rgba(63,185,80,.15); color:var(--accent2); }
+.pk-qr-ico.bad { background:rgba(248,81,73,.12); color:var(--warn); }
+.pk-qr-ico.partial { background:rgba(227,179,65,.12); color:var(--gold); }
+.pk-qr-txt { font-size:.83rem; font-weight:500; line-height:1.4; }
+.pk-qr-pts { font-family:var(--mono); font-size:.69rem; color:var(--text2); margin-left:4px; }
+.pk-qr-ans { margin-left:28px; font-size:.77rem; line-height:1.55; margin-bottom:.4rem; }
+.pk-qr-yours { color:var(--warn); margin-bottom:2px; }
+.pk-qr-right { color:var(--accent2); font-weight:600; }
+.pk-qr-exp { margin:.45rem 0 0 28px; font-size:.78rem; color:var(--text2); line-height:1.6; padding:.55rem .8rem; background:var(--bg3); border-left:2px solid var(--border); border-radius:0 4px 4px 0; }
+.pk-retry-btn { width:100%; padding:.8rem; background:var(--accent); color:#000; border:none; border-radius:8px; font-family:var(--sans); font-size:.9rem; font-weight:700; cursor:pointer; margin-top:1.25rem; transition:all .2s; }
+.pk-retry-btn:hover { background:var(--teal); }
+
+/* modal inside section */
+.pk-modal-bg { display:none; position:fixed; inset:0; z-index:5000; background:rgba(0,0,0,.7); align-items:center; justify-content:center; }
+.pk-modal-bg.show { display:flex; }
+.pk-modal { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:2rem; max-width:380px; width:90%; text-align:center; }
+.pk-modal h2 { font-size:1.2rem; font-weight:700; margin-bottom:.45rem; }
+.pk-modal p { color:var(--text2); font-size:.84rem; margin-bottom:1.35rem; line-height:1.6; }
+.pk-modal-btns { display:flex; gap:.65rem; justify-content:center; }
+.pk-modal-ok { padding:.55rem 1.4rem; background:var(--accent2); color:#000; border:none; border-radius:6px; font-family:var(--sans); font-size:.83rem; font-weight:700; cursor:pointer; }
+.pk-modal-cancel { padding:.55rem 1.4rem; background:var(--bg3); color:var(--text2); border:1px solid var(--border); border-radius:6px; font-family:var(--sans); font-size:.83rem; cursor:pointer; }
+.pk-modal-cancel:hover { color:var(--text); border-color:var(--accent); }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 0.4rem;
+}
+.badge-blue { background: rgba(88,166,255,0.2); color: var(--accent); }
+.badge-green { background: rgba(63,185,80,0.2); color: var(--accent2); }
+.badge-red { background: rgba(248,81,73,0.2); color: var(--warn); }
+.badge-gold { background: rgba(227,179,65,0.2); color: var(--gold); }
+
+/* FORMULA BLOCK */
+.formula-block {
+  background: var(--bg3);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--gold);
+  text-align: center;
+}
+.formula-block .formula-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text2);
+  margin-bottom: 0.5rem;
+}
+
+/* TRUTH TABLE */
+.truth-table th { color: var(--purple); }
+.truth-table .t { color: var(--accent2); font-weight: 700; }
+.truth-table .f { color: var(--warn); font-weight: 700; }
+.truth-table .result { color: var(--gold); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>⚡ HATO · IT & Gebäudeautomation</h1>
+  <div class="header-search">
+    <input type="text" id="searchInput" placeholder="Suchen... (z.B. MQTT, Subnetting)" oninput="doSearch(this.value)">
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <span class="sidebar-link active" onclick="showSection('home')">🏠 Startseite</span>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Themen</div>
+      <span class="sidebar-link" onclick="showSection('osi')">1. OSI-Modell</span>
+      <span class="sidebar-link" onclick="showSection('kapselung')">2. Kapselung & Sockets</span>
+      <span class="sidebar-link" onclick="showSection('subnetting')">3. Subnetting & CIDR</span>
+      <span class="sidebar-link" onclick="showSection('mqtt')">4. MQTT</span>
+      <span class="sidebar-link" onclick="showSection('vlan')">5. VLAN & Firewall</span>
+      <span class="sidebar-link" onclick="showSection('tls')">6. TLS / VPN</span>
+      <span class="sidebar-link" onclick="showSection('tca')">7. TCA & Logik</span>
+      <span class="sidebar-link" onclick="showSection('energie')">8. Energie & Schieflast</span>
+      <span class="sidebar-link" onclick="showSection('modbus')">9. Modbus & Endianness</span>
+      <span class="sidebar-link" onclick="showSection('middleware')">10. Middleware</span>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Übungen</div>
+      <span class="sidebar-link" onclick="showSection('aufgaben')">📝 Aufgaben & Lösungen</span>
+      <span class="sidebar-link" onclick="showSection('quiz')">🎯 Quiz</span>
+      <span class="sidebar-link" onclick="showSection('vokabel')">📖 Vokabelliste</span>
+      <span class="sidebar-link" onclick="showSection('lernmodus')">🔄 Lernmodus</span>
+      <span class="sidebar-link" onclick="showSection('probeklausur')">🎓 Probeklausur</span>
+    </div>
+  </nav>
+
+  <main class="main" id="mainContent">
+
+    <!-- HOME -->
+    <div id="home" class="section active">
+      <div class="hero">
+        <h2>IT & Gebäude&shy;<span>automation</span></h2>
+        <p>Interaktive Lernseite für die Klausur — alle Themen aus den Unterlagen, mit Aufgaben, Lösungen, Quiz und Probeklausur. Alles an einem Ort.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-badge">Themen: <span>10</span></div>
+        <div class="stat-badge">Aufgaben: <span>30+</span></div>
+        <div class="stat-badge">Quiz-Fragen: <span>40+</span></div>
+        <div class="stat-badge">Vokabeln: <span>50+</span></div>
+      </div>
+
+      <div class="topic-grid">
+        <div class="topic-card" onclick="showSection('osi')">
+          <div class="icon">🔌</div>
+          <h3>OSI-Modell</h3>
+          <p>7 Schichten, TCP vs. UDP, Troubleshooting</p>
+        </div>
+        <div class="topic-card" onclick="showSection('kapselung')">
+          <div class="icon">📦</div>
+          <h3>Kapselung & Sockets</h3>
+          <p>Header, PDU, Overhead-Berechnung</p>
+        </div>
+        <div class="topic-card" onclick="showSection('subnetting')">
+          <div class="icon">🌐</div>
+          <h3>Subnetting & CIDR</h3>
+          <p>/24, Broadcast, Gateway, Routing</p>
+        </div>
+        <div class="topic-card" onclick="showSection('mqtt')">
+          <div class="icon">📡</div>
+          <h3>MQTT</h3>
+          <p>Publish/Subscribe, QoS, Retain, Topics</p>
+        </div>
+        <div class="topic-card" onclick="showSection('vlan')">
+          <div class="icon">🔒</div>
+          <h3>VLAN & Firewall</h3>
+          <p>Access/Trunk, ACL, Top-Down, DNAT</p>
+        </div>
+        <div class="topic-card" onclick="showSection('tls')">
+          <div class="icon">🔐</div>
+          <h3>TLS & VPN</h3>
+          <p>Zertifikate, Self-Signed, WireGuard</p>
+        </div>
+        <div class="topic-card" onclick="showSection('tca')">
+          <div class="icon">⚙️</div>
+          <h3>TCA-Modell & Logik</h3>
+          <p>Trigger/Condition/Action, Hysterese, Bool</p>
+        </div>
+        <div class="topic-card" onclick="showSection('energie')">
+          <div class="icon">⚡</div>
+          <h3>Energie & Schieflast</h3>
+          <p>VDE-AR-N 4100, Wallbox, Peak Shaving</p>
+        </div>
+        <div class="topic-card" onclick="showSection('modbus')">
+          <div class="icon">🔢</div>
+          <h3>Modbus & Endianness</h3>
+          <p>Register, INT32, Big/Little Endian</p>
+        </div>
+        <div class="topic-card" onclick="showSection('middleware')">
+          <div class="icon">🏗️</div>
+          <h3>Middleware</h3>
+          <p>Silo-Problem, Protokollübersetzung, SPOF</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OSI -->
+    <div id="osi" class="section">
+      <div class="content-h2">🔌 OSI-Schichtenmodell</div>
+
+      <div class="box box-info">
+        <div class="box-title">Merksatz</div>
+        Bei der Fehlersuche (Troubleshooting) immer von unten nach oben — von Schicht 1 (Kabel) bis Schicht 7 (Anwendung). Das nennt man <strong>Bottom-Up</strong>.
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Layer</th><th>Name</th><th>Funktion</th><th>Beispiele (Gebäude)</th></tr>
+          <tr><td>7</td><td>Application</td><td>Anwendungsprotokolle (M2M)</td><td>HTTP, MQTT, Modbus TCP, KNXnet/IP</td></tr>
+          <tr><td>6</td><td>Presentation</td><td>Datendarstellung, Verschlüsselung</td><td>TLS/SSL, JPEG</td></tr>
+          <tr><td>5</td><td>Session</td><td>Sitzungsverwaltung</td><td>NetBIOS</td></tr>
+          <tr><td>4</td><td>Transport</td><td>End-zu-End-Verbindung</td><td>TCP, UDP</td></tr>
+          <tr><td>3</td><td>Network</td><td>Logische Adressierung & Routing</td><td>IPv4, IPv6, ICMP (Ping)</td></tr>
+          <tr><td>2</td><td>Data Link</td><td>Physische Adressierung im LAN</td><td>MAC, ARP, Switch, VLAN 802.1Q</td></tr>
+          <tr><td>1</td><td>Physical</td><td>Physikalische Signale</td><td>Cat.7, LWL, Zigbee 2.4 GHz</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">TCP vs. UDP — Der entscheidende Unterschied</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Eigenschaft</th><th>TCP</th><th>UDP</th></tr>
+          <tr><td>Verbindungsart</td><td>Verbindungsorientiert</td><td>Verbindungslos</td></tr>
+          <tr><td>Bestätigung</td><td>Ja — jedes Paket wird bestätigt</td><td>Nein — "Fire and forget"</td></tr>
+          <tr><td>Zuverlässigkeit</td><td>Sehr hoch</td><td>Gering</td></tr>
+          <tr><td>Verbindungsaufbau</td><td>3-Way-Handshake (SYN→SYN-ACK→ACK)</td><td>Keiner</td></tr>
+          <tr><td>Overhead</td><td>Hoch (Header ~20 Byte)</td><td>Gering (Header ~8 Byte)</td></tr>
+          <tr><td>Multicast möglich?</td><td>NEIN</td><td>JA</td></tr>
+          <tr><td>Einsatz Gebäude</td><td>Modbus TCP, HTTP, ETS-Tunneling</td><td>KNXnet/IP Routing, MQTT (QoS 0)</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Prüfungsfalle</div>
+        TCP kann kein Multicast! Deshalb nutzt KNXnet/IP Routing zwingend UDP. Tunneling (Einzelverbindung zur ETS) nutzt TCP. Das ist ein Klassiker!
+      </div>
+
+      <div class="content-h3">Der 3-Way-Handshake (TCP)</div>
+      <div class="content-p">TCP baut eine Verbindung in exakt 3 Schritten auf:</div>
+      <pre>Client → Server : SYN (Ich möchte verbinden)
+Server → Client : SYN-ACK (OK, ich habe empfangen, bestätige)
+Client → Server : ACK (Bestätigung empfangen — Verbindung steht!)</pre>
+
+      <div class="box box-tip">
+        <div class="box-title">💡 Praxis-Tipp</div>
+        Merkhilfe: TCP = Einschreiben mit Rückschein. UDP = Flugblatt in den Briefkasten. TCP bekommt Bestätigung, UDP nicht.
+      </div>
+
+      <div class="content-h3">OSI-Fehlerdiagnose — Typische Klausurfragen</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Symptom</th><th>Schicht</th><th>Protokoll/Hardware</th></tr>
+          <tr><td>LED am Switchport bleibt dunkel</td><td>1 (Physical)</td><td>Twisted Pair Kabel, Switchport</td></tr>
+          <tr><td>Ping → Zeitüberschreitung</td><td>3 (Network)</td><td>ICMP, IPv4</td></tr>
+          <tr><td>Wireshark: 3-Way-Handshake abgebrochen</td><td>4 (Transport)</td><td>TCP</td></tr>
+          <tr><td>Fehlerhafter HTTP-GET Request</td><td>7 (Application)</td><td>HTTP</td></tr>
+          <tr><td>KNX-Gerät nicht erreichbar, keine MAC in ARP-Tabelle</td><td>2 (Data Link)</td><td>ARP, Ethernet-Switch</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- KAPSELUNG -->
+    <div id="kapselung" class="section">
+      <div class="content-h2">📦 Datenkapselung & Sockets</div>
+
+      <div class="content-h3">Encapsulation — Wie ein Paket entsteht</div>
+      <div class="content-p">Wenn eine Anwendung Daten sendet, wird jede OSI-Schicht einen Header hinzufügen. Das nennt sich <strong>Encapsulation</strong> (Kapselung). Beim Empfänger wird der Prozess rückwärts durchgeführt (Decapsulation).</div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Schicht</th><th>Was wird hinzugefügt?</th><th>Größe</th></tr>
+          <tr><td>Layer 7 (Application)</td><td>Modbus-Funktionscode / MQTT-Payload</td><td>1–2 Byte (Nutzlast)</td></tr>
+          <tr><td>Layer 4 (Transport)</td><td>TCP-Header: Ports, Sequenznummer, Prüfsumme</td><td>+20 Byte</td></tr>
+          <tr><td>Layer 3 (Network)</td><td>IP-Header: Quell-IP + Ziel-IP</td><td>+20 Byte</td></tr>
+          <tr><td>Layer 2 (Data Link)</td><td>Ethernet-Header: MAC-Adressen + Frame-Typ + FCS</td><td>+14–18 Byte</td></tr>
+          <tr><td>GESAMT</td><td>—</td><td><strong>≥66 Byte für 2 Byte Nutzlast!</strong></td></tr>
+        </table>
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Overhead-Berechnung (Klausurrelevant!)</div>
+        Payload: 2 Byte | Overhead: 64 Byte | Gesamt: 66 Byte<br>
+        <strong>Payload-Anteil = (2 / 66) × 100 = 3,03%</strong><br>
+        Das bedeutet: 97% des Pakets sind Verwaltungsaufwand. Nur 3% sind echte Nutzdaten!
+      </div>
+
+      <div class="formula-block">
+        <div class="formula-label">Overhead-Formel</div>
+        Payload-Anteil (%) = (Payload / Gesamtgröße) × 100<br>
+        Gesamtgröße = Payload + Overhead
+      </div>
+
+      <div class="content-h3">Was ist ein Socket?</div>
+      <div class="content-p">Eine IP-Adresse allein reicht nicht, um eine Verbindung eindeutig zu identifizieren. Ein Server kann mehrere Dienste auf derselben IP anbieten — der Port unterscheidet sie.</div>
+
+      <div class="box box-info">
+        <div class="box-title">Socket = IP + Port + Protokoll</div>
+        Beispiel Modbus: <code>192.168.1.50:502/TCP</code><br>
+        Beispiel MQTT: <code>192.168.1.50:1883/TCP</code><br>
+        Beispiel KNXnet/IP: <code>224.0.23.12:3671/UDP</code> (Multicast!)
+      </div>
+
+      <div class="content-h3">Wichtige Ports für die Gebäudetechnik</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Port</th><th>Protokoll</th><th>Verwendung</th></tr>
+          <tr><td>80</td><td>HTTP</td><td>Webseiten, REST-APIs</td></tr>
+          <tr><td>443</td><td>HTTPS</td><td>Sichere Webseiten, Cloud-Verbindungen</td></tr>
+          <tr><td>502</td><td>Modbus TCP</td><td>Energiezähler, SPS, Wechselrichter</td></tr>
+          <tr><td>1883</td><td>MQTT</td><td>IoT-Middleware, Gebäudeautomation</td></tr>
+          <tr><td>8883</td><td>MQTT+TLS</td><td>Verschlüsseltes MQTT</td></tr>
+          <tr><td>3671</td><td>KNXnet/IP</td><td>KNX über IP (UDP Multicast)</td></tr>
+          <tr><td>8123</td><td>HTTP (HA)</td><td>Home Assistant Weboberfläche</td></tr>
+          <tr><td>51820</td><td>WireGuard VPN</td><td>VPN-Tunnel (UDP)</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- SUBNETTING -->
+    <div id="subnetting" class="section">
+      <div class="content-h2">🌐 Subnetting & CIDR-Notation</div>
+
+      <div class="content-p">Die Subnetzmaske teilt eine IP-Adresse in zwei Teile: den <strong>Netzwerkanteil</strong> (gleich für alle Geräte im selben Netz) und den <strong>Hostanteil</strong> (eindeutig für jedes Gerät).</div>
+
+      <div class="content-h3">Beispiel: 192.168.10.50 /24</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Begriff</th><th>Adresse</th><th>Erklärung</th></tr>
+          <tr><td>IP-Adresse</td><td>192.168.10.50</td><td>Das Gerät selbst</td></tr>
+          <tr><td>Subnetzmaske</td><td>255.255.255.0 (/24)</td><td>Erste 3 Blöcke = Netz, letzter Block = Gerät</td></tr>
+          <tr><td>Netzwerkadresse</td><td>192.168.10.0</td><td>Letzter Block = 0. Nicht vergebar!</td></tr>
+          <tr><td>Broadcast-Adresse</td><td>192.168.10.255</td><td>Letzter Block = 255. Sendet an ALLE Geräte.</td></tr>
+          <tr><td>Hostbereich</td><td>192.168.10.1–254</td><td>254 mögliche Geräteadressen</td></tr>
+          <tr><td>Gateway</td><td>Meist .1 (z.B. .10.1)</td><td>Router ins nächste Netz</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">Die wichtigste Kommunikationsregel</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Situation</th><th>Was passiert?</th><th>Welche Schicht?</th></tr>
+          <tr><td>Quell- und Ziel-IP im <strong>GLEICHEN</strong> Subnetz</td><td>Direkte Kommunikation über Switch (MAC-Adresse)</td><td>Layer 2</td></tr>
+          <tr><td>Quell- und Ziel-IP in <strong>VERSCHIEDENEN</strong> Subnetzen</td><td>Paket muss an Router (Gateway) — der leitet weiter</td><td>Layer 3</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Prüfungsfalle: Subnetz-Erkennung</div>
+        192.168.30.x und 192.168.40.x sind VERSCHIEDENE Netze! Der dritte Block (30 vs. 40) unterscheidet sich.<br>
+        Ein Switch allein kann diese nicht verbinden — es braucht zwingend einen Router auf Layer 3.
+      </div>
+
+      <div class="content-h3">CIDR-Notation und Präzision</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>CIDR</th><th>Subnetzmaske</th><th>Bedeutung</th><th>Hosts</th></tr>
+          <tr><td>/32</td><td>255.255.255.255</td><td>Genau ein einziges Gerät</td><td>1</td></tr>
+          <tr><td>/24</td><td>255.255.255.0</td><td>Gesamtes /24-Netz (254 Hosts)</td><td>254</td></tr>
+          <tr><td>/16</td><td>255.255.0.0</td><td>Großes Netz (65534 Hosts)</td><td>65534</td></tr>
+          <tr><td>/8</td><td>255.0.0.0</td><td>Klasse-A-Netz</td><td>~16 Mio.</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-info">
+        <div class="box-title">ℹ️ Firewall-Relevanz von CIDR</div>
+        In ACL-Regeln: <code>10.0.20.50/32</code> = genau dieses eine Gerät (z.B. Middleware)<br>
+        <code>10.0.20.0/24</code> = alle 254 Geräte im IoT-Netz<br>
+        Ausnahmen müssen mit <code>/32</code> spezifisch über allgemeinen Regeln stehen!
+      </div>
+
+      <div class="content-h3">Routing-Ablauf: Server A → Zähler B</div>
+      <div class="content-p">Server A: 192.168.30.15/24 | Zähler B: 192.168.40.200/24 | Gateway: 192.168.30.1</div>
+      <pre>Schritt 1: Server A vergleicht Netzanteil: 192.168.30.x ≠ 192.168.40.x → VERSCHIEDENE Netze
+Schritt 2: Server A sendet Paket an Gateway (192.168.30.1)
+Schritt 3: Router empfängt und leitet weiter ins Netz 192.168.40.x
+Schritt 4: Zähler B empfängt das Paket
+
+→ Switch ALLEINE: NEIN (kennt nur MAC-Adressen im selben Netz)
+→ Router nötig: JA (Layer 3)</pre>
+
+      <div class="content-h3">IP-Konflikt: Doppelte IP-Adresse</div>
+      <div class="content-p">Wenn zwei Geräte dieselbe IP haben (z.B. Smart-TV und Middleware beide auf 192.168.1.50), nutzt der Switch ARP (Layer 2) zur MAC-Auflösung. Beide Geräte antworten auf ARP-Requests, der Switch speichert abwechselnd die MAC-Adresse des TV oder der Middleware → Verbindung bricht zyklisch ab ("Flapping").</div>
+    </div>
+
+    <!-- MQTT -->
+    <div id="mqtt" class="section">
+      <div class="content-h2">📡 MQTT — Publish / Subscribe</div>
+
+      <div class="content-p">MQTT ist das Standard-Protokoll für IoT und Gebäudeautomation. Es ersetzt das ineffiziente <strong>Polling</strong> (ständiges Fragen) durch ein Event-basiertes System: Geräte senden nur, wenn sich etwas ändert.</div>
+
+      <div class="content-h3">Die drei Rollen in MQTT</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Rolle</th><th>Beispiel</th><th>Aufgabe</th></tr>
+          <tr><td>Publisher (Sender)</td><td>Sensor, Zähler, Wallbox</td><td>Veröffentlicht Daten unter einem Topic</td></tr>
+          <tr><td>Broker (Vermittler)</td><td>Mosquitto, Home Assistant</td><td>Empfängt alle Daten und verteilt an Abonnenten</td></tr>
+          <tr><td>Subscriber (Empfänger)</td><td>Aktor, Visualisierung, App</td><td>Hat Topics abonniert, empfängt neue Werte automatisch</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">Topic-Struktur</div>
+      <div class="content-p">Topics sind hierarchische Datenpfade — von allgemein nach spezifisch:</div>
+      <pre>gebaeude / etage / raum / gerät / datenpunkt
+
+Beispiele:
+gebaeude/kg/technikraum/waermepumpe/vorlauf
+gebaeude/carport/wallbox_01/status
+gebaeude/carport/wallbox_01/ladeleistung/soll
+gebaeude/carport/wallbox_01/energie/zaehlerstand</pre>
+
+      <div class="content-h3">Quality of Service (QoS)</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>QoS</th><th>Name</th><th>Wie?</th><th>Wann nutzen?</th></tr>
+          <tr><td>0</td><td>At most once</td><td>Einmal senden, keine Bestätigung (wie UDP)</td><td>Temperaturanzeige — ein verlorener Wert ist egal</td></tr>
+          <tr><td>1</td><td>At least once</td><td>Senden mit PUBACK-Bestätigung, kann doppelt kommen</td><td>Schaltstatus — muss ankommen, Duplikat tolerierbar</td></tr>
+          <tr><td>2</td><td>Exactly once</td><td>4-Wege-Handshake — genau einmal verarbeitet</td><td>Zählerstände, Abrechnungsdaten</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Prüfungsfalle: QoS für Zählerstände</div>
+        Zählerstände (kWh) MÜSSEN QoS 2 haben! Bei QoS 1 könnte ein Wert doppelt gezählt werden (zu hohe Rechnung). Bei QoS 0 könnte ein Wert verloren gehen (zu niedrige Rechnung). Nur QoS 2 garantiert genau einmalige Verarbeitung.
+      </div>
+
+      <div class="content-h3">Das Retain-Flag</div>
+      <div class="content-p">Normalerweise bekommt ein neuer Subscriber erst Daten, wenn der Publisher das nächste Mal sendet. Mit <code>Retain = TRUE</code> speichert der Broker den letzten Wert und schickt ihn sofort beim Abonnieren.</div>
+      <div class="box box-tip">
+        <div class="box-title">💡 Merksatz</div>
+        Retain = TRUE ist wie eine Anzeigetafel: Die letzte Info bleibt stehen, auch wenn niemand gerade sendet. Neu-Ankommende sehen sofort den aktuellen Stand.
+      </div>
+
+      <div class="content-h3">MQTT vs. Polling</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Eigenschaft</th><th>Polling (Modbus)</th><th>MQTT (Event-basiert)</th></tr>
+          <tr><td>Netzwerklast</td><td>Hoch (konstant)</td><td>Gering (nur bei Änderung)</td></tr>
+          <tr><td>Latenz</td><td>Bis zu 1 Abfrageintervall</td><td>Fast Echtzeit</td></tr>
+          <tr><td>Skalierbarkeit</td><td>Schlecht (120 Geräte × 1min = viele Pakete)</td><td>Gut (N:M-Kommunikation)</td></tr>
+          <tr><td>Protokoll</td><td>TCP</td><td>TCP (QoS 1/2) oder UDP-ähnlich (QoS 0)</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- VLAN & FIREWALL -->
+    <div id="vlan" class="section">
+      <div class="content-h2">🔒 VLAN, Firewall & IT-Sicherheit</div>
+
+      <div class="content-h3">1. VLAN-Netzwerksegmentierung (IEEE 802.1Q)</div>
+      <div class="content-p">VLANs unterteilen einen physischen Switch logisch in mehrere isolierte Netze. Ein infiziertes Gäste-Smartphone kann so die Gebäude-Middleware nicht angreifen.</div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Port-Typ</th><th>Verwendung</th><th>VLAN-Tag</th><th>Endgerät weiß davon?</th></tr>
+          <tr><td>Access-Port (Untagged)</td><td>Endgeräte (PC, Middleware, Kamera)</td><td>Switch taggt intern, entfernt bei Ausgabe</td><td>Nein</td></tr>
+          <tr><td>Trunk-Port (Tagged)</td><td>Router, Multi-SSID Access-Points</td><td>4-Byte VLAN-ID im Frame</td><td>Ja (nötig)</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">Typisches VLAN-Konzept (Beispiel Villa)</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>VLAN</th><th>Name</th><th>Subnetz</th><th>Geräte</th></tr>
+          <tr><td>VLAN 10</td><td>Privat</td><td>10.0.10.0/24</td><td>PCs, Laptops, Smartphones</td></tr>
+          <tr><td>VLAN 20</td><td>IoT</td><td>10.0.20.0/24</td><td>Middleware, KNX, Kameras</td></tr>
+          <tr><td>VLAN 30</td><td>Gäste</td><td>10.0.30.0/24</td><td>WLAN für Besucher</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">Switch-Konfiguration (Lösungsbeispiel)</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Switch-Port</th><th>Gerät</th><th>Modus</th><th>Erlaubte VLANs</th></tr>
+          <tr><td>Port 1</td><td>Haupt-Router (Gateway)</td><td>Trunk</td><td>10, 20, 30</td></tr>
+          <tr><td>Port 5</td><td>PC des Eigentümers</td><td>Access</td><td>10</td></tr>
+          <tr><td>Port 12</td><td>Middleware (Home Assistant)</td><td>Access</td><td>20</td></tr>
+          <tr><td>Port 24</td><td>WLAN Access-Point (Multi-SSID)</td><td>Trunk</td><td>10, 20, 30</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">2. Firewall-Regeln (ACL) — Top-Down-Prinzip</div>
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Kritische Regel</div>
+        Die Firewall liest <strong>streng von oben nach unten</strong>. Die erste passende Regel wird ausgeführt, alle anderen ignoriert!<br>
+        → Ausnahmen MÜSSEN über den allgemeinen Regeln stehen!
+      </div>
+
+      <div class="content-p">Anforderungsbeispiel mit Lösungsreihenfolge:</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Regel</th><th>Quelle</th><th>Ziel</th><th>Protokoll/Port</th><th>Aktion</th><th>Zweck</th></tr>
+          <tr><td>1</td><td>10.0.10.99/32</td><td>10.0.20.50/32</td><td>TCP/8123</td><td>DROP</td><td>Kinder-Tablet BLOCKIERT (AUSNAHME zuerst!)</td></tr>
+          <tr><td>2</td><td>10.0.10.0/24</td><td>10.0.20.50/32</td><td>TCP/8123</td><td>ALLOW</td><td>Privatnetz darf auf Middleware</td></tr>
+          <tr><td>3</td><td>10.0.20.0/24</td><td>WAN (0.0.0.0/0)</td><td>ANY</td><td>DROP</td><td>IoT-Kameras kein Internetzugang</td></tr>
+          <tr><td>4</td><td>10.0.20.50/32</td><td>WAN</td><td>TCP/443</td><td>ALLOW</td><td>Middleware darf Updates laden</td></tr>
+          <tr><td>5</td><td>ANY</td><td>ANY</td><td>ANY</td><td>DROP</td><td>Default: Alles blockieren</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-info">
+        <div class="box-title">ℹ️ Stateful Inspection</div>
+        Erlaubt Regel 2 dem PC den Zugriff auf die Middleware, lässt die Firewall die <strong>Antwort</strong> der Middleware automatisch durch. Es wird keine explizite Rückrichtungsregel benötigt!
+      </div>
+
+      <div class="content-h3">3. Port-Forwarding (DNAT) — Das Risiko</div>
+      <div class="formula-block">
+        <div class="formula-label">Botnetz-Scan-Dauer</div>
+        t = Anzahl_Ports / Scan-Geschwindigkeit<br>
+        65.536 Ports ÷ 300 Ports/Sek = 218 Sekunden ≈ 3,6 Minuten
+      </div>
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Kritisches Sicherheitsrisiko</div>
+        Modbus TCP (Port 502) hat KEINE Passwort-Authentifizierung! Wer den Port findet, hat sofortigen Schreibzugriff — kann Relais schalten, Heizung verstellen usw.<br>
+        → NIEMALS Modbus TCP per Port-Forwarding ins Internet freigeben!
+      </div>
+
+      <div class="content-h3">4. VLAN Hopping</div>
+      <div class="content-p">Wenn ein unmanaged Switch an einen Trunk-Port angeschlossen wird, werden alle VLAN-Tags weitergeleitet. Alle angeschlossenen Geräte befinden sich dann in allen VLANs gleichzeitig und können auf jedes Netz zugreifen — massive Sicherheitslücke!</div>
+    </div>
+
+    <!-- TLS/VPN -->
+    <div id="tls" class="section">
+      <div class="content-h2">🔐 TLS, Zertifikate & VPN</div>
+
+      <div class="content-h3">1. HTTPS / TLS — Verschlüsselung</div>
+      <div class="content-p">HTTPS verschlüsselt Daten asymmetrisch (Public/Private Key). Niemand im Netzwerk kann mitlesen — auch ein Gast im selben WLAN nicht.</div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Der Browser-Fehler "Verbindung nicht sicher"</div>
+        Wenn der Kunde <code>https://10.0.20.50:8123</code> aufruft und eine rote Warnung sieht:<br><br>
+        ❌ <strong>Der Datenverkehr ist TROTZDEM verschlüsselt!</strong> (Self-Signed Zertifikat)<br>
+        ✅ Was fehlt: Die <strong>Identitätsbestätigung</strong> durch eine Certificate Authority.<br><br>
+        Ein offizielles Zertifikat (Let's Encrypt, DigiCert) kann nur auf einen registrierten Domainnamen ausgestellt werden, NIEMALS auf eine private IP-Adresse wie 192.168.x.x oder 10.x.x.x!
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Zertifikatstyp</th><th>Verschlüsselung?</th><th>Identität bestätigt?</th><th>Browser-Warnung?</th></tr>
+          <tr><td>Offizielles Zertifikat (CA)</td><td>Ja</td><td>Ja (für Domains)</td><td>Nein</td></tr>
+          <tr><td>Self-Signed</td><td>Ja (100%)</td><td>Nein</td><td>Ja (rote Warnung)</td></tr>
+          <tr><td>Kein HTTPS (HTTP)</td><td>Nein</td><td>Nein</td><td>Warnung (unsicher)</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">2. VPN — WireGuard Architektur</div>
+      <div class="content-p">Ein VPN kapselt Daten sicher ein und ermöglicht Fernzugriff ohne Port-Forwarding für Einzeldienste.</div>
+
+      <pre>WireGuard-Ablauf (Smartphone → Middleware):
+
+1. Smartphone (5G): App erzeugt Paket → Ziel-IP: 10.0.20.50 (intern)
+2. Internet:        VPN verschlüsselt → neues UDP-Paket an 85.214.10.20:51820 (WAN-IP)
+3. Router:         Prüft WireGuard-Schlüssel → packt aus → sieht interne Ziel-IP
+4. LAN:            Routet Paket ins VLAN 20 → Middleware 10.0.20.50 empfängt</pre>
+
+      <div class="box box-tip">
+        <div class="box-title">💡 Vorteil VPN gegenüber Port-Forwarding</div>
+        VPN öffnet nur EINEN Port (UDP 51820) mit Schlüsselauthentifizierung. Kein direktes "Loch" in die interne Anlage. Protokolle ohne Auth (Modbus) bleiben geschützt.
+      </div>
+
+      <div class="content-h3">3. Cloud-Verbindung ohne Port-Forwarding</div>
+      <div class="content-p">Wie kann eine Cloud die Middleware steuern, ohne dass ein Port geöffnet ist?</div>
+      <div class="box box-gold">
+        <div class="box-title">🔑 Schlüsselkonzept: Ausgehende Verbindung</div>
+        Die Middleware baut <strong>selbst</strong> eine ausgehende TCP/TLS-Verbindung zum Cloud-Server auf (Port 443 HTTPS). Diese wird durch die Stateful Inspection Firewall als <em>established connection</em> erkannt.<br><br>
+        Die Firewall erlaubt den Rückverkehr des Cloud-Servers automatisch, weil die Verbindung von innen initiiert wurde.<br>
+        → Kein eingehender Port muss geöffnet werden. Der Cloud-Server gibt Befehle über diese bestehende Verbindung zurück.
+      </div>
+    </div>
+
+    <!-- TCA -->
+    <div id="tca" class="section">
+      <div class="content-h2">⚙️ TCA-Modell & Boolesche Logik</div>
+
+      <div class="content-h3">1. Das TCA-Modell</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Block</th><th>Name</th><th>Was ist es?</th><th>Wichtig!</th></tr>
+          <tr><td>T</td><td>TRIGGER (Auslöser)</td><td>Das Ereignis, das die Regel aufweckt</td><td>Fast immer eine FLANKE (Zustandswechsel)!</td></tr>
+          <tr><td>C</td><td>CONDITION (Bedingung)</td><td>Prüft, ob Regel ausgeführt werden darf</td><td>Immer ein statischer ZUSTAND (TRUE/FALSE)!</td></tr>
+          <tr><td>A</td><td>ACTION (Aktion)</td><td>Der Befehl, der ausgeführt wird</td><td>Nur wenn T feuert UND C = TRUE</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Der klassische Flanken-Fehler (Prüfungsklassiker!)</div>
+        <strong>Problem:</strong> Trigger = "Regen beginnt" (Flanke: FALSE→TRUE). Condition: Fenster ist offen.<br>
+        <strong>Fehler:</strong> Um 15:00 Uhr öffnet der Kunde das Fenster manuell bei weiter regnendem Wetter.<br>
+        <strong>Warum kein Eingriff?</strong> Der Trigger (Regenbeginn) feuert nur EIN MAL bei der Flanke — er feuert nicht erneut, weil der Regen nicht erneut beginnt! Das System "schläft".<br><br>
+        <strong>Lösung:</strong> Trigger auf Zustand ändern: "SOLANGE Regen UND Fenster offen → zufahren" oder zweiter Trigger: "Fenster öffnet sich → wenn Regen → zufahren"
+      </div>
+
+      <div class="content-h3">2. Boolesche Algebra</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Operator</th><th>Bedeutung</th><th>Elektrotechnik</th><th>Beispiel</th></tr>
+          <tr><td>AND (UND)</td><td>Alle Bedingungen müssen TRUE sein</td><td>Reihenschaltung</td><td>Fenster_zu AND Alarm_scharf</td></tr>
+          <tr><td>OR (ODER)</td><td>Mindestens eine muss TRUE sein</td><td>Parallelschaltung</td><td>Alarm_scharf OR Sonne_scheint</td></tr>
+          <tr><td>NOT (NICHT)</td><td>Kehrt Ergebnis um</td><td>Invertierung</td><td>NOT(Tag) = Nacht</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">3. Wahrheitstabelle — Alarmanlage</div>
+      <div class="content-p">Bedingung: <code>(NOT (Fenster_Bad OR Fenster_Kueche)) AND (Haustuer_geschlossen)</code></div>
+      <div class="tbl-wrap">
+        <table class="truth-table">
+          <tr><th>Fenster Bad</th><th>Fenster Küche</th><th>Haustür geschlossen</th><th>Bad OR Küche</th><th>NOT (B OR K)</th><th>Ergebnis</th></tr>
+          <tr><td>0</td><td>0</td><td>1</td><td class="f">F</td><td class="t">T</td><td class="t result">TRUE ✓</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td class="t">T</td><td class="f">F</td><td class="f result">FALSE ✗</td></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td class="f">F</td><td class="t">T</td><td class="f result">FALSE ✗</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td class="t">T</td><td class="f">F</td><td class="f result">FALSE ✗</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">4. Jalousie-Logik (Wahrheitstabelle Probeklausur)</div>
+      <div class="content-p">Logik: <code>(Alarm_scharf OR Sonne_scheint) AND NOT(Fenster_offen)</code></div>
+      <div class="tbl-wrap">
+        <table class="truth-table">
+          <tr><th>Alarm</th><th>Sonne</th><th>Fenster offen</th><th>A OR S</th><th>NOT Fenster</th><th>Ergebnis</th></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td class="t">T</td><td class="t">T</td><td class="t result">1 (fährt ab) ✓</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td class="t">T</td><td class="f">F</td><td class="f result">0 (Blockiert) ✗</td></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td class="f">F</td><td class="t">T</td><td class="f result">0 (Blockiert) ✗</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td class="t">T</td><td class="t">T</td><td class="t result">1 (fährt ab) ✓</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">5. Hysterese und Feedback-Loops</div>
+      <div class="content-p">Ein klassischer Fehler ist das <strong>Flapping (Schwingen)</strong>:</div>
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Feedback-Loop Problem</div>
+        Regel: WENN Überschuss &gt; 1500W → Heizstab AN<br>
+        Heizstab startet → zieht 2000W → Überschuss sinkt von 3000W auf 1000W → Regel &lt;1500W → AUS → Überschuss steigt wieder → AN → Schwingen im Sekundentakt!
+      </div>
+      <div class="box box-tip">
+        <div class="box-title">💡 Lösung: Hysterese (Totband)</div>
+        <strong>Falsch:</strong> EIN &gt;1500W, AUS &lt;1500W (selber Wert)<br>
+        <strong>Richtig:</strong> EIN &gt;3000W, AUS &lt;1000W (Totband von 2000W)<br><br>
+        Hysterese-Wert wählen: Mindestens so groß wie die Leistung des geschalteten Verbrauchers (hier 2000W).
+      </div>
+
+      <div class="content-h3">6. Beispiel TCA-Design: Jalousie</div>
+      <pre>Kundenwunsch: "Jalousie auf 50%, wenn Sonne stark (PV &gt;4kW),
+ nur im Sommer (Juni–August), nur wenn Fernseher AN."
+
+TRIGGER:   PV-Leistung wechselt auf &gt;4kW (FLANKE)
+CONDITION: Monat in [Juni, Juli, August]
+           AND Fernseher_Status == AN
+ACTION:    Jalousie_Wohnzimmer → Position 50%</pre>
+    </div>
+
+    <!-- ENERGIE -->
+    <div id="energie" class="section">
+      <div class="content-h2">⚡ Energiemanagement, Schieflast & Peak Shaving</div>
+
+      <div class="content-h3">1. Schieflastverordnung VDE-AR-N 4100</div>
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Gesetzliche Grenze</div>
+        Die maximale Phasendifferenz (Schieflast) am Netzanschlusspunkt darf <strong>20 A</strong> nicht überschreiten!<br>
+        Einspeisung = negativer Bezugsstrom.<br>
+        Symmetrische 3-phasige Verbraucher (z.B. 3-phasige Wallbox) verändern die Schieflast NICHT!
+      </div>
+
+      <div class="formula-block">
+        <div class="formula-label">Schieflast-Berechnung</div>
+        Schieflast = max(Phase) − min(Phase)<br>
+        [Einspeisung zählt als negativer Wert!]<br><br>
+        Beispiel: L1 = -16A, L2 = +6A, L3 = +2A<br>
+        max = +6A, min = -16A → Schieflast = 6 − (−16) = 22A → Normverstoß!
+      </div>
+
+      <div class="content-h3">Schieflast-Paradoxon: Wallbox auf L1 bei Einspeisung</div>
+      <div class="content-p"><strong>Ausgangssituation:</strong> L1 = -16A (speist ein), L2 = +6A, L3 = +2A → Schieflast = 22A</div>
+      <div class="content-p"><strong>Wallbox startet 1-phasig auf L1 mit 10A:</strong></div>
+      <pre>Neu L1 = -16A + 10A = -6A (weniger Einspeisung)
+Neu L2 = +6A (unverändert)
+Neu L3 = +2A (unverändert)
+Neue Schieflast = +6A − (−6A) = 12A ✓ (unter 20A, OK!)
+
+→ Die Wallbox startet REDUZIERT die Schieflast! Der Kunde irrt sich.</pre>
+
+      <div class="box box-tip">
+        <div class="box-title">💡 Merksatz Schieflast</div>
+        Eine Wallbox auf L1 bei starker L1-Einspeisung ist GÜNSTIG für die Schieflast! Die Einspeisung und der Bezug gleichen sich aus.
+      </div>
+
+      <div class="content-h3">2. Batterie, C-Rate & Wechselrichter-Flaschenhals</div>
+      <div class="formula-block">
+        <div class="formula-label">Formeln</div>
+        Kapazität (kWh) = Nennspannung (V) × Kapazität (Ah) ÷ 1000<br><br>
+        Max. DC-Leistung (Batterie) = Kapazität (kWh) × C-Rate<br><br>
+        Nutzbare AC-Leistung = MIN(DC-Leistung, Wechselrichter-Limit)
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Parameter</th><th>Formel</th><th>Beispiel (48V, 300Ah, 0.5C, WR 4.6kW)</th></tr>
+          <tr><td>Kapazität</td><td>U × Ah ÷ 1000</td><td>48V × 300Ah ÷ 1000 = <strong>14,4 kWh</strong></td></tr>
+          <tr><td>DC-Leistung (C-Rate)</td><td>kWh × C</td><td>14,4 kWh × 0,5 = <strong>7,2 kW</strong></td></tr>
+          <tr><td>Nutzbare AC-Leistung</td><td>MIN(DC, WR)</td><td>MIN(7,2kW, 4,6kW) = <strong>4,6 kW</strong></td></tr>
+          <tr><td>Flaschenhals</td><td>—</td><td>Der Wechselrichter (4,6 kW &lt; 7,2 kW)</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Prüfungsfalle: Flaschenhals immer benennen!</div>
+        Die nutzbare Systemleistung ist immer das MINIMUM aus chemischer Batterieleistung (C-Rate) und elektrischer Wechselrichterleistung. Wer ist kleiner? Das ist der Flaschenhals!
+      </div>
+
+      <div class="content-h3">3. Peak Shaving (15-Minuten-Mittelwert)</div>
+      <div class="formula-block">
+        <div class="formula-label">Peak Shaving Formel</div>
+        Ziel-Arbeit = Limit (kW) × 15 Minuten<br>
+        Bisherige Arbeit = Leistung × vergangene Zeit<br>
+        P_rest = (Ziel_Arbeit − Bisherige_Arbeit) ÷ Verbleibende_Zeit
+      </div>
+
+      <div class="content-p"><strong>Beispiel (Aufgabe aus dem Unterricht):</strong></div>
+      <pre>Limit: 200 kW × 15 min = 3000 kWmin (Ziel-Arbeit)
+11 min bei 240 kW:    240 × 11 = 2640 kWmin (verbraucht)
+Restzeit: 15 − 11 = 4 Minuten
+P_rest = (3000 − 2640) / 4 = 360 / 4 = 90 kW (maximal)
+Minus Grundlast (50 kW): 90 − 50 = 40 kW (für Kältemaschine)</pre>
+
+      <div class="content-p"><strong>Probeklausur-Beispiel (300/200 kW, 5+5+5 min):</strong></div>
+      <pre>Ziel: 250 kW × 15 min = 3750 kWmin
+Min 0–5: 300 kW × 5 min = 1500 kWmin
+Min 5–10: 200 kW × 5 min = 1000 kWmin
+Bisherige Arbeit: 2500 kWmin
+Restzeit: 5 Minuten
+P_rest = (3750 − 2500) / 5 = 1250 / 5 = 250 kW</pre>
+    </div>
+
+    <!-- MODBUS -->
+    <div id="modbus" class="section">
+      <div class="content-h2">🔢 Modbus TCP & Endianness</div>
+
+      <div class="content-h3">1. Modbus-Grundlagen</div>
+      <div class="content-p">Modbus TCP ist ein einfaches Master-Slave-Protokoll auf Layer 7, das über TCP/IP auf Port 502 kommuniziert. Kein Passwort, keine Authentifizierung.</div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Begriff</th><th>Bedeutung</th></tr>
+          <tr><td>Register</td><td>16-Bit Speicherzelle (INT16, max. 65.535)</td></tr>
+          <tr><td>INT32</td><td>32-Bit Wert aus 2 Registern (High Word + Low Word)</td></tr>
+          <tr><td>High Word</td><td>Das "große" Register — der Multiplikator (× 65.536)</td></tr>
+          <tr><td>Low Word</td><td>Das "kleine" Register — der Rest</td></tr>
+          <tr><td>Coil</td><td>1-Bit Register (Schaltzustand)</td></tr>
+          <tr><td>Holding Register</td><td>Lese-/Schreibregister (z.B. 40100)</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">2. Endianness — Big Endian vs. Little Endian</div>
+      <div class="formula-block">
+        <div class="formula-label">INT32 Berechnungsformel</div>
+        Gesamtwert = (High_Word × 65.536) + Low_Word<br><br>
+        Big Endian:    Register1 = High Word, Register2 = Low Word<br>
+        Little Endian: Register1 = Low Word,  Register2 = High Word
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Endianness-Fehler (Klausur-Klassiker!)</div>
+        Register 40100: 500 | Register 40101: 5<br><br>
+        ❌ Falsch (Big Endian konfiguriert, aber Gerät sendet Little Endian):<br>
+        500 × 65.536 + 5 = 32.768.005 Wh (unmöglich!)<br><br>
+        ✅ Richtig (Little Endian: Reg1 = Low Word):<br>
+        5 × 65.536 + 500 = 328.180 Wh (= 328 kWh, plausibel!)
+      </div>
+
+      <div class="content-p">Der Azubi hat "Big Endian" konfiguriert, aber das Gerät sendet "Little Endian" (Word Swap). Register 40100 ist tatsächlich das Low Word, Register 40101 das High Word.</div>
+
+      <div class="content-h3">3. Warum Polling problematisch ist</div>
+      <div class="content-p">120 Raumtemperaturregler werden jede Minute abgefragt:</div>
+      <pre>Pro Paket: 2 Byte Nutzdaten + 64 Byte Overhead = 66 Byte Gesamtgröße
+Payload-Anteil: 2/66 × 100 = 3,03%
+120 Regler × 1/Minute = 120 TCP-Verbindungen / Minute
+MQTT mit Retain würde diese Last auf Near-Zero reduzieren!</pre>
+    </div>
+
+    <!-- MIDDLEWARE -->
+    <div id="middleware" class="section">
+      <div class="content-h2">🏗️ Middleware in der Gebäudeautomation</div>
+
+      <div class="content-h3">1. Das Silo-Problem</div>
+      <div class="content-p">Verschiedene Protokolle (KNX, Modbus, Zigbee) sprechen nicht miteinander. Die Middleware übersetzt zwischen ihnen.</div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>System</th><th>Protokoll</th><th>Medium</th><th>Gateway für Middleware</th></tr>
+          <tr><td>KNX</td><td>KNX TP</td><td>Twisted Pair</td><td>KNX-IP-Router / KNXnet/IP</td></tr>
+          <tr><td>Modbus</td><td>Modbus TCP</td><td>Ethernet (RJ45)</td><td>Direkt TCP/IP Socket</td></tr>
+          <tr><td>Zigbee</td><td>Zigbee 802.15.4</td><td>Funk 2.4 GHz</td><td>Zigbee-USB-Stick (Coordinator)</td></tr>
+          <tr><td>Z-Wave</td><td>Z-Wave</td><td>Funk 868 MHz</td><td>Z-Wave USB-Controller</td></tr>
+          <tr><td>DALI</td><td>DALI</td><td>2-Draht Bus</td><td>DALI-Gateway (z.B. MDT SCI-DALI)</td></tr>
+        </table>
+      </div>
+
+      <div class="content-h3">2. Datenfluss in der Middleware</div>
+      <pre>Szenario: PV-Leistung &gt;3500W → Jalousie auf 50%
+
+Input:    Modbus TCP ← PV-Wechselrichter (Register 40030: Leistung in W)
+Verarbeitung: Middleware vergleicht Wert &gt; 3500W
+Output:   KNXnet/IP → KNX Jalousieaktor (Gruppenadresse 2/0/1)</pre>
+
+      <div class="content-h3">3. Single Point of Failure (SPOF)</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Funktion</th><th>Status bei Switch-Ausfall</th><th>Begründung</th></tr>
+          <tr><td>PV-gesteuerte Jalousie</td><td>❌ Ausfall</td><td>Middleware braucht Netzwerk für Modbus-Daten</td></tr>
+          <tr><td>Jalousie per KNX-Taster</td><td>✅ OK</td><td>KNX läuft auf eigenem TP-Bus, unabhängig vom IP-Netz!</td></tr>
+          <tr><td>Zigbee per Smartphone-App</td><td>❌ Ausfall</td><td>App → WLAN → Switch → Zigbee-Controller → alles über Netz</td></tr>
+        </table>
+      </div>
+
+      <div class="box box-warn">
+        <div class="box-title">⚠️ Sicherheitsrelevante Grundfunktionen</div>
+        Beleuchtung (Not-Aus), Heizung (Grundwärme), Fenstersteuerung und Alarmfunktionen dürfen NIEMALS ausschließlich über Middleware realisiert werden! Die Middleware ist ein "Single Point of Failure". KNX und andere Feldbussysteme müssen eigenständig funktionieren.
+      </div>
+    </div>
+
+    <!-- AUFGABEN -->
+    <div id="aufgaben" class="section">
+      <div class="content-h2">📝 Aufgaben & Lösungen</div>
+
+      <!-- Task 1 -->
+      <div class="task-block">
+        <div class="task-header" onclick="toggleTask(this)">
+          <h3>Aufgabe: Overhead-Berechnung (Modbus Polling)</h3>
+          <span class="task-pts">Rechnen</span>
+        </div>
+        <div class="task-body">
+          <div class="task-question">
+            Eine Visualisierung ruft per Modbus TCP (Polling) minütlich die Werte von 120 Raumtemperaturreglern ab.<br>
+            Nutzdaten: 2 Byte | Overhead: 64 Byte<br>
+            a) Berechnen Sie den prozentualen Payload-Anteil.<br>
+            b) Warum TCP für Modbus, UDP für KNXnet/IP Routing?
+          </div>
+          <button class="show-answer-btn" onclick="showAnswer(this)">💡 Antwort zeigen</button>
+          <div class="answer-block">
+            <div class="answer-content">
+              <strong>a) Payload-Anteil:</strong><br>
+              <span class="formula">Payload / Gesamt × 100 = 2 / (2+64) × 100 = 2/66 × 100 = 3,03%</span>
+              Nur 3% des Pakets sind echte Nutzdaten! 97% sind Header/Overhead. Das zeigt, wie ineffizient Polling mit kleinen Datenpunkten ist.<br><br>
+              <strong>b) TCP vs. UDP Begründung:</strong><br>
+              <strong>Modbus TCP verwendet TCP</strong>, weil Messwerte und Steuerbefehle garantiert ankommen müssen — ein verlorener Wert könnte falsche Schaltaktionen auslösen. Zuverlässigkeit > Geschwindigkeit.<br><br>
+              <strong>KNXnet/IP Routing verwendet UDP</strong>, weil:
+              1. Multicast-Übertragung an alle KNX-Geräte gleichzeitig nötig ist
+              2. TCP kann kein Multicast (nur Unicast)
+              3. Geschwindigkeit wichtiger als Einzelbestätigung
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2 -->
+      <div class="task-block">
+        <div class="task-header" onclick="toggleTask(this)">
+          <h3>Aufgabe: Schieflast-Berechnung (Wallbox)</h3>
+          <span class="task-pts">Rechnen</span>
+        </div>
+        <div class="task-body">
+          <div class="task-question">
+            Ausgangswerte am Netzanschlusspunkt:<br>
+            L1 = 8A (Bezug), L2 = -5A (Einspeisung), L3 = -8A (Einspeisung)<br>
+            a) Wallbox startet 1-phasig auf L1 mit 6A. Neue Ströme? Schieflast? Freigabe?<br>
+            b) Wallbox 3-phasig mit 16A/Phase. Neue Ströme? Schieflast?
+          </div>
+          <button class="show-answer-btn" onclick="showAnswer(this)">💡 Antwort zeigen</button>
+          <div class="answer-block">
+            <div class="answer-content">
+              <strong>Aktuelle Schieflast (ohne Wallbox):</strong><br>
+              max = +8A, min = -8A → Schieflast = 8 - (-8) = 16A ✓ (unter 20A OK)<br><br>
+              <strong>a) 1-phasig auf L1 mit 6A:</strong><br>
+              Neu L1 = 8 + 6 = 14A | L2 = -5A | L3 = -8A<br>
+              <span class="formula">Neue Schieflast = 14 - (-8) = 22A → ÜBERSCHREITET 20A!</span>
+              ❌ Freigabe NICHT erlaubt bei 6A auf L1!<br><br>
+              <strong>b) 3-phasig mit 16A/Phase:</strong><br>
+              Neu L1 = 8 + 16 = 24A | Neu L2 = -5 + 16 = 11A | Neu L3 = -8 + 16 = 8A<br>
+              <span class="formula">Neue Schieflast = 24 - 8 = 16A ✓ (unter 20A, OK!)</span>
+              ✅ 3-phasige Ladung darf freigegeben werden!<br><br>
+              <strong>Erkenntnis:</strong> Symmetrische 3-phasige Verbraucher verändern die Schieflast nicht (addieren auf alle drei Phasen gleich). Die Schieflast bleibt konstant.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3 -->
+      <div class="task-block">
+        <div class="task-header" onclick="toggleTask(this)">
+          <h3>Aufgabe: Modbus Endianness-Fehler</h3>
+          <span class="task-pts">Rechnen</span>
+        </div>
+        <div class="task-body">
+          <div class="task-question">
+            Register 40100: 500 | Register 40101: 5<br>
+            Dashboard zeigt: 32.768.005 Wh<br>
+            a) Wie kommt die Middleware auf diesen Wert? (Big Endian konfiguriert)<br>
+            b) Tatsächlicher Wert? Welcher Endianness-Fehler?
+          </div>
+          <button class="show-answer-btn" onclick="showAnswer(this)">💡 Antwort zeigen</button>
+          <div class="answer-block">
+            <div class="answer-content">
+              <strong>a) Fehler-Reproduktion (Big Endian falsch):</strong><br>
+              Big Endian: Register 40100 = High Word (Multiplikator), 40101 = Low Word<br>
+              <span class="formula">500 × 65.536 + 5 = 32.768.000 + 5 = 32.768.005 Wh</span>
+              Das ist fast 33 MWh — völlig unrealistisch für einen Haushalt!<br><br>
+              <strong>b) Fehlerkorrektur (Little Endian / Word Swap):</strong><br>
+              Das Gerät sendet Little Endian: Register 40100 = Low Word, 40101 = High Word<br>
+              <span class="formula">5 × 65.536 + 500 = 327.680 + 500 = 328.180 Wh = 328 kWh</span>
+              ✅ Das ist ein realistischer Zählerstand!<br><br>
+              <strong>Lösung:</strong> In der Middleware-Konfiguration "Word Swap" / "Little Endian" einstellen.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 4 -->
+      <div class="task-block">
+        <div class="task-header" onclick="toggleTask(this)">
+          <h3>Aufgabe: Flaschenhals-Logik (Wärmepumpe Boost)</h3>
+          <span class="task-pts">Rechnen + TCA</span>
+        </div>
+        <div class="task-body">
+          <div class="task-question">
+            PV: 3 kW | Hausverbrauch (ohne WP): 1 kW<br>
+            Batterie: 20 kWh, C-Rate 0.5, SoC 100%<br>
+            Wechselrichter max. AC: 4,6 kW<br>
+            Wärmepumpe Status 4 (Boost): braucht 10 kW<br>
+            Darf die Middleware den Boost freigeben?
+          </div>
+          <button class="show-answer-btn" onclick="showAnswer(this)">💡 Antwort zeigen</button>
+          <div class="answer-block">
+            <div class="answer-content">
+              <strong>1. Max. DC-Leistung (Batterie/Chemisch):</strong><br>
+              <span class="formula">20 kWh × 0,5 C = 10 kW (DC, chemisch möglich)</span>
+              <strong>2. Tatsächliche AC-Leistung (Flaschenhals!):</strong><br>
+              <span class="formula">MIN(10 kW, 4,6 kW) = 4,6 kW (Wechselrichter-Limit!)</span>
+              <strong>3. Verfügbare autarke Gesamtleistung:</strong><br>
+              PV-Überschuss: 3 kW - 1 kW (Hausverbrauch) = 2 kW PV-Überschuss<br>
+              <span class="formula">Gesamt: 2 kW (PV) + 4,6 kW (WR-Limit) = 6,6 kW</span>
+              <strong>4. Entscheidung:</strong><br>
+              6,6 kW &lt; 10 kW (benötigt) → ❌ NEIN, Boost NICHT freigeben!<br><br>
+              <strong>Flaschenhals:</strong> Der Wechselrichter (max. 4,6 kW AC) — nicht die Batteriechemie (10 kW möglich).<br>
+              Trotz voller Batterie kann das System nur 6,6 kW autark bereitstellen.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 5 -->
+      <div class="task-block">
+        <div class="task-header" onclick="toggleTask(this)">
+          <h3>Aufgabe: Peak Shaving Berechnung</h3>
+          <span class="task-pts">Rechnen</span>
+        </div>
+        <div class="task-body">
+          <div class="task-question">
+            Leistungslimit: 200 kW (15-Minuten-Mittelwert)<br>
+            08:00–08:11 Uhr (11 min): durchschnittlich 240 kW<br>
+            IT-Grundlast: 50 kW (nicht abschaltbar)<br>
+            Auf welchen Wert muss die Kältemaschine begrenzt werden?
+          </div>
+          <button class="show-answer-btn" onclick="showAnswer(this)">💡 Antwort zeigen</button>
+          <div class="answer-block">
+            <div class="answer-content">
+              <strong>Schritt 1:</strong> Ziel-Arbeit im Intervall<br>
+              <span class="formula">200 kW × 15 min = 3000 kWmin</span>
+              <strong>Schritt 2:</strong> Bisherige Arbeit<br>
+              <span class="formula">240 kW × 11 min = 2640 kWmin</span>
+              <strong>Schritt 3:</strong> P_rest<br>
+              <span class="formula">P_rest = (3000 − 2640) / (15 − 11) = 360 / 4 = 90 kW</span>
+              <strong>Schritt 4:</strong> Grundlast abziehen<br>
+              <span class="formula">90 kW − 50 kW (Grundlast) = 40 kW (für Kältemaschine)</span>
+              ✅ Kältemaschine darf maximal 40 kW in den restlichen 4 Minuten verbrauchen.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 6 -->
+      <div class="task-block">
+        <div class="task-header" onclick="toggleTask(this)">
+          <h3>Aufgabe: Batterie-Kapazität (48V/300Ah)</h3>
+          <span class="task-pts">Rechnen</span>
+        </div>
+        <div class="task-body">
+          <div class="task-question">
+            Batterie: 48V, 300Ah, C-Rate 0.5, WR-Limit: 4600W<br>
+            Berechne: Kapazität (kWh), Max DC-Leistung, Nutzbare AC-Leistung, Flaschenhals
+          </div>
+          <button class="show-answer-btn" onclick="showAnswer(this)">💡 Antwort zeigen</button>
+          <div class="answer-block">
+            <div class="answer-content">
+              <strong>Energiekapazität:</strong><br>
+              <span class="formula">48 V × 300 Ah ÷ 1000 = 14,4 kWh</span>
+              <strong>Max. DC-Leistung (C-Rate):</strong><br>
+              <span class="formula">14,4 kWh × 0,5 C = 7,2 kW</span>
+              <strong>Nutzbare AC-Leistung:</strong><br>
+              <span class="formula">MIN(7,2 kW, 4,6 kW) = 4,6 kW</span>
+              <strong>Flaschenhals:</strong> Der Wechselrichter! (4,6 kW &lt; 7,2 kW)<br>
+              Die Batterie könnte 7,2 kW liefern, der Wechselrichter begrenzt auf 4,6 kW.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz" class="section">
+      <div class="content-h2">🎯 Interaktives Quiz</div>
+      <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <button class="show-answer-btn" onclick="resetQuiz()">🔄 Quiz neu starten</button>
+        <div id="quizScore" style="font-family:var(--mono);font-size:0.85rem;padding:0.5rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);">Score: 0/0</div>
+      </div>
+      <div id="quizContainer"></div>
+    </div>
+
+    <!-- VOKABELN -->
+    <div id="vokabel" class="section">
+      <div class="content-h2">📖 Vokabelliste — Alle Fachbegriffe</div>
+      <input type="text" id="vocabSearch" placeholder="Begriff suchen..." oninput="filterVocab(this.value)"
+        style="width:100%;padding:0.6rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:0.85rem;margin-bottom:1.5rem;outline:none;">
+      <div class="vocab-grid" id="vocabGrid"></div>
+    </div>
+
+    <!-- LERNMODUS -->
+    <div id="lernmodus" class="section">
+      <div class="content-h2">🔄 Lernmodus</div>
+      <div id="learnContainer"></div>
+    </div>
+
+    <!-- PROBEKLAUSUR -->
+    <div id="probeklausur" class="section">
+      <div class="content-h2">🎓 Probeklausur</div>
+
+      <!-- TABS -->
+      <div class="pk-tabs">
+        <button class="pk-tab active" onclick="pkSwitchTab('solutions',this)">📖 Musterlösungen</button>
+        <button class="pk-tab exam-tab" onclick="pkSwitchTab('exam',this)">⏱️ Klausur schreiben (90 min)</button>
+      </div>
+
+      <!-- ─── TAB: MUSTERLÖSUNGEN ─── -->
+      <div class="pk-panel active" id="pk-solutions">
+
+        <div class="exam-score">
+          <div class="score-item"><div class="num">100</div><div class="lbl">Gesamtpunkte</div></div>
+          <div class="score-item"><div class="num">4</div><div class="lbl">Teile</div></div>
+          <div class="score-item"><div class="num">22</div><div class="lbl">Aufgaben</div></div>
+        </div>
+
+        <!-- TEIL 1 -->
+        <div class="content-h3">TEIL 1: Netzwerkarchitektur und OSI-Modell (20 Punkte)</div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>1.1 — IP-Konflikt: Middleware vs. Smart-TV (4P)</h3><span class="task-pts">4 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Middleware verliert alle 30 Sek. die Verbindung. Smart-TV hat manuell dieselbe IP 192.168.1.50. Welches Layer-2-Protokoll ist verantwortlich?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>ARP (Address Resolution Protocol) — Layer 2</strong><br><br>
+              Beide Geräte antworten auf ARP-Broadcasts ("Wer hat 192.168.1.50?"). Der Switch-Cache wird abwechselnd mit der MAC des TV oder der Middleware überschrieben → Pakete landen zufällig am falschen Gerät → Abbruch alle ~30 Sek. (ARP-Cache-Timeout).<br><br>
+              <strong>Lösung:</strong> IP der Middleware statisch und eindeutig vergeben.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>1.2 — Wireshark: abgebrochener 3-Way-Handshake (3P)</h3><span class="task-pts">3 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Wireshark zeigt: SYN gesendet, kein SYN-ACK empfangen. Welcher OSI-Layer?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Layer 4 — Transport (TCP)</strong><br><br>
+              SYN → SYN-ACK → ACK = TCP-3-Way-Handshake = Layer 4. Ursache: Firewall, geschlossener Port oder überlastete Gegenstelle.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>1.3 — KNX-IP-Router nicht erreichbar, Middleware schon (3P)</h3><span class="task-pts">3 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">PC (10.0.10.5) kann Middleware (10.0.20.50) pingen, aber nicht KNX-IP-Router (10.0.20.100). Switchport leuchtet, Firewall erlaubt VLAN 10 → 20. Wahrscheinlichste Ursache auf Layer 3?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Fehlendes Standard-Gateway am KNX-IP-Router (Layer 3)</strong><br><br>
+              Der PC sendet korrekt. Aber der KNX-IP-Router weiß nicht, wohin er Antwortpakete an 10.0.10.5 (anderes Subnetz) schicken soll → Antwort wird verworfen.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>1.4 — KNXnet/IP Routing über Layer-3-Router (3P)</h3><span class="task-pts">3 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">KNXnet/IP Routing zwischen zwei Gebäuden funktioniert nicht. Warum?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>UDP-Multicast wird von Standard-IT-Routern nicht weitergeleitet</strong><br><br>
+              KNXnet/IP Routing nutzt Multicast-Gruppe 224.0.23.12:3671/UDP. Multicast-Routing (IGMP-Proxy/PIM) muss explizit konfiguriert werden — standardmäßig deaktiviert.<br>
+              <strong>Lösung:</strong> Multicast-Routing aktivieren oder KNXnet/IP Tunneling (TCP Unicast) verwenden.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>1.5 — Broadcast-Adresse 172.16.5.0/24 (3P)</h3><span class="task-pts">3 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Subnetz 172.16.5.0/24: a) Broadcast-Adresse? b) Warum kein Broadcast ins Internet?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>a)</strong> <span class="formula">172.16.5.255</span> (letzter Oktett = 255)<br><br>
+              <strong>b)</strong> Router verwerfen Broadcast-Pakete — sie überschreiten keine Netzgrenzen. Globale Broadcasts wären ein Denial-of-Service-Angriff gegen das gesamte Internet.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>1.6 — Overhead-Berechnung Modbus-TCP (4P)</h3><span class="task-pts">4 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Modbus-Paket: 2 Byte Payload, 64 Byte Overhead. Prozentualer Payload-Anteil?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <span class="formula">(2 / 66) × 100 = 3,03 %</span>
+              Nur 3% sind Nutzdaten — 97% sind Overhead. Das zeigt, warum Modbus-Polling ineffizient ist.
+            </div></div>
+          </div>
+        </div>
+
+        <!-- TEIL 2 -->
+        <div class="content-h3" style="margin-top:2rem">TEIL 2: Automatisierungslogik (25 Punkte)</div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>2.1 — Außenbeleuchtung: Geht das Licht an? (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Trigger: PIR wechselt auf TRUE | Condition: &lt;50 Lux | Action: Licht AN<br>17:00 Uhr: 60 Lux, PIR → TRUE (Licht geht nicht an). PIR bleibt TRUE. 17:15 Uhr: 40 Lux.<br>a) Geht Licht an? b) Wie umprogrammieren?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>a) ❌ Nein!</strong><br>
+              Trigger = Flanke (einmaliger Wechsel FALSE→TRUE). Um 17:00 feuerte er einmalig. Danach bleibt PIR TRUE — keine neue Flanke, kein neuer Trigger. Das System "schläft".<br><br>
+              <strong>b) Dual-Trigger (Best Practice):</strong>
+              <pre>Trigger 1: PIR wechselt auf TRUE
+Trigger 2: Helligkeit wechselt auf &lt;50 Lux
+Condition: PIR == TRUE AND Helligkeit &lt; 50 Lux
+Action:    Licht AN</pre>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>2.2 — Jalousie Wahrheitstabelle (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Logik: (Alarm OR Sonne) AND NOT(Fenster_offen). Auswerten für alle 4 Kombinationen.</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <div class="tbl-wrap"><table class="truth-table">
+                <tr><th>Alarm</th><th>Sonne</th><th>Fenster</th><th>A OR S</th><th>NOT F</th><th>Ergebnis</th></tr>
+                <tr><td>0</td><td>1</td><td>0</td><td class="t">1</td><td class="t">1</td><td class="t result">1 — fährt ab ✓</td></tr>
+                <tr><td>1</td><td>0</td><td>1</td><td class="t">1</td><td class="f">0</td><td class="f result">0 — blockiert</td></tr>
+                <tr><td>0</td><td>0</td><td>0</td><td class="f">0</td><td class="t">1</td><td class="f result">0 — blockiert</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td class="t">1</td><td class="t">1</td><td class="t result">1 — fährt ab ✓</td></tr>
+              </table></div>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>2.3 — Feedback-Loop / Flapping (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">EIN: Überschuss &gt;1500W → Heizstab (2000W) AN. AUS: &lt;1500W → AUS. Überschuss springt auf 3000W. Was passiert?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Feedback-Loop / Flapping:</strong> Heizstab EIN → zieht 2000W → Überschuss 1000W &lt;1500 → AUS → steigt → EIN → Relais klackert!<br><br>
+              <strong>Lösung Hysterese:</strong> EIN &gt;3000W, AUS &lt;1000W (Totband ≥ Verbraucherleistung)
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>2.4 — TCA-Modell Grundlagen (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Was ist der Unterschied zwischen Trigger und Condition im TCA-Modell?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>TRIGGER</strong> = Flanke (einmaliger Zustandswechsel, weckt die Regel auf)<br>
+              <strong>CONDITION</strong> = statischer Zustand (TRUE/FALSE zum Zeitpunkt des Triggers)<br>
+              <strong>ACTION</strong> = Befehl, wenn Trigger feuert UND Condition TRUE
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>2.5 — Dachfenster-Automatisierung Fehler (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Trigger "Regen beginnt" — Fenster öffnen bei Regen schließt es nicht mehr. Lösung?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Zweiter Trigger hinzufügen:</strong> "Fensterkontakt öffnet sich" + Condition "Regen == TRUE"<br><br>
+              So wird beim manuellen Öffnen bei Regen ebenfalls reagiert — ohne auf eine neue Regen-Flanke warten zu müssen.
+            </div></div>
+          </div>
+        </div>
+
+        <!-- TEIL 3 -->
+        <div class="content-h3" style="margin-top:2rem">TEIL 3: Energiemanagement (30 Punkte)</div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>3.1 — Schieflast L1=-16A, L2=+6A, L3=+2A (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Schieflast berechnen + Normverstoß?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <span class="formula">Schieflast = max(+6) − min(−16) = 6 − (−16) = 22 A → NORMVERSTOSS! (&gt;20 A VDE-AR-N 4100)</span>
+              Einspeisung zählt als negativer Bezug!
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>3.2 — Schieflast-Paradoxon: Wallbox auf L1 (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Gleiche Ausgangslage (22A Schieflast). Wallbox lädt 10A auf L1. Neue Schieflast? Darf Wallbox starten?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              Neu L1 = −16 + 10 = −6 A | L2 = +6 A | L3 = +2 A<br>
+              <span class="formula">Neue Schieflast = +6 − (−6) = 12 A ✓ — UNTER 20A!</span>
+              ✅ Die Wallbox REDUZIERT die Schieflast! Wallbox darf starten. Der Kunde irrt sich.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>3.3 — Batterie 48V/300Ah Flaschenhals (8P)</h3><span class="task-pts">8 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">48V, 300Ah, C-Rate 0,5, WR-Limit 4,6 kW. Kapazität? DC-Leistung? Nutzbare AC? Flaschenhals?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <span class="formula">① Kapazität: 48 × 300 ÷ 1000 = 14,4 kWh</span>
+              <span class="formula">② DC-Leistung: 14,4 × 0,5 C = 7,2 kW</span>
+              <span class="formula">③ Nutzbare AC: MIN(7,2 kW ; 4,6 kW) = 4,6 kW</span>
+              <strong>Flaschenhals: Wechselrichter</strong> (4,6 kW &lt; 7,2 kW) — Batterie könnte mehr, WR limitiert.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>3.4 — Peak Shaving 250 kW (7P)</h3><span class="task-pts">7 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Limit: 250 kW. Min 0–5: 300 kW | Min 5–10: 200 kW. Max. Restleistung für letzte 5 min?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <span class="formula">Ziel-Arbeit: 250 × 15 = 3750 kWmin</span>
+              <span class="formula">Bisherig: (300×5) + (200×5) = 2500 kWmin</span>
+              <span class="formula">P_rest = (3750 − 2500) ÷ 5 = 250 kW</span>
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>3.5 — Modbus Endianness-Fehler (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Reg 40100=500, Reg 40101=5. Big Endian konfiguriert → 32.768.005 Wh. Was ist falsch? Korrekter Wert?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Fehler:</strong> Gerät sendet Little Endian, Middleware ist auf Big Endian eingestellt.<br>
+              <span class="formula">❌ Big Endian (falsch): 500 × 65.536 + 5 = 32.768.005 Wh</span>
+              <span class="formula">✅ Little Endian (richtig): 5 × 65.536 + 500 = 328.180 Wh = 328 kWh</span>
+              <strong>Lösung:</strong> Middleware auf "Word Swap / Little Endian" umstellen.
+            </div></div>
+          </div>
+        </div>
+
+        <!-- TEIL 4 -->
+        <div class="content-h3" style="margin-top:2rem">TEIL 4: IT-Sicherheit (25 Punkte)</div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>4.1 — Switch-Port für Middleware (4P)</h3><span class="task-pts">4 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Home-Assistant an Port 12, VLAN 20 (IoT). Richtige Port-Konfiguration?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Access-Port, VLAN 20</strong> — Endgeräte bekommen Access-Ports. Trunk-Ports nur für Router und Multi-SSID-APs.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>4.2 — Firewall ACL Fehleranalyse (5P)</h3><span class="task-pts">5 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Regel 1: ALLOW 10.0.20.50/32 → WAN Port 443. Regel 2: ALLOW 10.0.20.0/24 → WAN Port 443. Regel 3: DROP ANY. Fehler und warum ist Regel 1 überflüssig?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Fehler:</strong> Regel 2 öffnet das GESAMTE IoT-Netz (254 Geräte!) für HTTPS → Kameras, Sensoren, Malware dürfen ins Internet.<br><br>
+              <strong>Regel 1 überflüssig:</strong> Top-Down — Regel 2 trifft bereits auf 10.0.20.50/32 (Teilmenge von /24). Regel 1 wird nie als erste relevant.<br><br>
+              <strong>Korrekt:</strong> Nur Regel 1 behalten, Regel 2 löschen.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>4.3 — Port-Forwarding Scan-Dauer (4P)</h3><span class="task-pts">4 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Port 502 per DNAT freigegeben. Botnetz scannt 300 Ports/Sek. Wie lange bis Port gefunden (65.536 Ports)?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <span class="formula">t = 65.536 ÷ 300 = 218 Sek ≈ 3,6 Minuten</span>
+              Und Modbus TCP hat KEINE Passwortauthentifizierung → sofortiger Schreibzugriff!
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>4.4 — Self-Signed Zertifikat Browser-Warnung (4P)</h3><span class="task-pts">4 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Browser zeigt rote Warnung bei https://10.0.20.50:8123. Kunde: "Unverschlüsselt!" — Stimmt das?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>❌ Nein — der Datenverkehr ist vollständig verschlüsselt!</strong><br><br>
+              Self-Signed Zertifikat = Verschlüsselung 100% aktiv. Die Warnung bedeutet nur: Identität nicht durch eine Certificate Authority (CA) bestätigt. CAs stellen keine Zertifikate für private IP-Adressen aus — nur für registrierte Domainnamen.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>4.5 — Cloud ohne Port-Forwarding (4P)</h3><span class="task-pts">4 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Kein DNAT geöffnet — Cloud steuert trotzdem Middleware. Wie?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>Ausgehende Verbindung + Stateful Inspection:</strong><br>
+              Middleware baut selbst TCP/HTTPS (Port 443) zum Cloud-Server auf. Firewall erkennt: von innen initiiert → Rückantworten automatisch erlaubt. Cloud gibt Befehle durch die bestehende Leitung zurück. Kein eingehender Port nötig.
+            </div></div>
+          </div>
+        </div>
+
+        <div class="task-block">
+          <div class="task-header" onclick="toggleTask(this)">
+            <h3>4.6 — VLAN Hopping unmanaged Switch (4P)</h3><span class="task-pts">4 Pkt</span>
+          </div>
+          <div class="task-body">
+            <div class="task-question">Port 8 = Trunk. Kunde steckt Unmanaged-Switch rein. Was passiert?</div>
+            <button class="show-answer-btn" onclick="showAnswer(this)">💡 Lösung</button>
+            <div class="answer-block"><div class="answer-content">
+              <strong>VLAN Hopping:</strong> Unmanaged Switch kann 802.1Q-Tags nicht verarbeiten → leitet alle getaggten Frames weiter → alle angeschlossenen Geräte sind gleichzeitig in ALLEN VLANs. Die gesamte Segmentierung ist aufgehoben!
+            </div></div>
+          </div>
+        </div>
+
+      </div><!-- /pk-solutions -->
+
+      <!-- ─── TAB: KLAUSUR-SIMULATION ─── -->
+      <div class="pk-panel" id="pk-exam">
+
+        <!-- STATE: start -->
+        <div id="pk-start-view" class="pk-start">
+          <div class="pk-start-card">
+            <div class="pk-start-badge">📋 Klausur-Simulation · HATO</div>
+            <h1 class="pk-start-h1">Gebäudeautomation &amp;<br><span>Systemintegration</span></h1>
+            <p class="pk-start-sub">Elektroniker/in für Gebäude- und Systemintegration · realistische Prüfungssimulation</p>
+            <div class="pk-info-grid">
+              <div class="pk-info-item"><div class="pk-info-lbl">Zeitlimit</div><div class="pk-info-val"><em>90 Minuten</em></div></div>
+              <div class="pk-info-item"><div class="pk-info-lbl">Gesamtpunkte</div><div class="pk-info-val"><em>100 Punkte</em></div></div>
+              <div class="pk-info-item"><div class="pk-info-lbl">Format</div><div class="pk-info-val">MC + Rechenaufgaben</div></div>
+              <div class="pk-info-item"><div class="pk-info-lbl">Bestehen ab</div><div class="pk-info-val"><em>50 Punkte</em></div></div>
+              <div class="pk-info-item"><div class="pk-info-lbl">Teil 1 · Netzwerk &amp; OSI</div><div class="pk-info-val">20 Pkt — 6 Fragen</div></div>
+              <div class="pk-info-item"><div class="pk-info-lbl">Teil 2 · Automatisierung</div><div class="pk-info-val">25 Pkt — 5 Fragen</div></div>
+              <div class="pk-info-item"><div class="pk-info-lbl">Teil 3 · Energie</div><div class="pk-info-val">30 Pkt — 5 Fragen</div></div>
+              <div class="pk-info-item"><div class="pk-info-lbl">Teil 4 · IT-Sicherheit</div><div class="pk-info-val">25 Pkt — 6 Fragen</div></div>
+            </div>
+            <div class="pk-rules">
+              <h3>Hinweise</h3>
+              <div class="pk-rule">Timer startet sofort nach Klick auf "Klausur starten"</div>
+              <div class="pk-rule">Multiple Choice: immer nur eine Antwort richtig</div>
+              <div class="pk-rule">Rechenaufgaben: Lösungsweg + Ergebnis mit Einheit</div>
+              <div class="pk-rule">Nicht beantwortete Fragen = 0 Punkte</div>
+              <div class="pk-rule">Bei Zeitablauf automatische Abgabe</div>
+              <div class="pk-rule">Nach Abgabe siehst du alle Lösungen mit Erklärungen</div>
+            </div>
+            <input class="pk-name-inp" id="pkNameInp" type="text" placeholder="Dein Name (optional)">
+            <button class="pk-go" onclick="pkBeginExam()">Klausur starten — 90 Minuten ▶</button>
+          </div>
+        </div>
+
+        <!-- STATE: running -->
+        <div id="pk-running-view" style="display:none">
+          <div class="pk-timerbar">
+            <div class="pk-timer-num" id="pkTimerNum">90:00</div>
+            <div class="pk-timer-track"><div class="pk-timer-fill" id="pkTimerFill" style="width:100%"></div></div>
+            <span class="pk-answered" id="pkAnswered">0 / 22 beantwortet</span>
+            <button class="pk-submit-btn" onclick="pkConfirmSubmit()">Abgeben ✓</button>
+          </div>
+          <div class="pk-qnav" id="pkQNav"></div>
+          <div id="pkBody"></div>
+          <div style="margin-top:1.5rem;padding-bottom:2rem">
+            <button onclick="pkConfirmSubmit()" style="width:100%;padding:.9rem;background:var(--accent2);color:#000;border:none;border-radius:8px;font-family:var(--sans);font-size:.95rem;font-weight:700;cursor:pointer;">
+              Klausur abgeben &amp; auswerten ✓
+            </button>
+          </div>
+        </div>
+
+        <!-- STATE: results -->
+        <div id="pk-results-view" style="display:none">
+          <div id="pkResultsWrap"></div>
+        </div>
+
+      </div><!-- /pk-exam -->
+
+    </div><!-- /probeklausur section -->
+
+    <!-- MODAL -->
+    <div class="pk-modal-bg" id="pkModal">
+      <div class="pk-modal">
+        <h2 id="pkModalTitle">Klausur abgeben?</h2>
+        <p id="pkModalText">Möchtest du jetzt abgeben?</p>
+        <div class="pk-modal-btns">
+          <button class="pk-modal-ok" onclick="pkDoSubmit()">Ja, abgeben ✓</button>
+          <button class="pk-modal-cancel" onclick="pkHideModal()">Weiter schreiben</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// === SECTION NAVIGATION ===
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const sec = document.getElementById(id);
+  if (sec) sec.classList.add('active');
+  document.querySelectorAll('.sidebar-link').forEach(l => {
+    if (l.getAttribute('onclick') && l.getAttribute('onclick').includes(`'${id}'`)) l.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+// === ACCORDION ===
+document.querySelectorAll('.accordion-header').forEach(h => {
+  h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
+});
+
+// === TASK TOGGLE ===
+function toggleTask(header) {
+  const body = header.nextElementSibling;
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+document.querySelectorAll('.task-body').forEach(b => b.style.display = 'block');
+
+// === SHOW ANSWER ===
+function showAnswer(btn) {
+  const block = btn.nextElementSibling;
+  if (block) {
+    block.classList.toggle('visible');
+    btn.textContent = block.classList.contains('visible') ? '🙈 Antwort verbergen' : '💡 Antwort zeigen';
+  }
+}
+
+// === SEARCH ===
+function doSearch(val) {
+  if (!val || val.length < 2) {
+    document.querySelectorAll('.highlight').forEach(el => {
+      el.outerHTML = el.textContent;
+    });
+    return;
+  }
+}
+
+// === QUIZ DATA ===
+const quizData = [
+  {
+    q: "Auf welcher OSI-Schicht arbeitet ARP (Address Resolution Protocol)?",
+    opts: ["Schicht 3 (Network)", "Schicht 2 (Data Link)", "Schicht 4 (Transport)", "Schicht 1 (Physical)"],
+    correct: 1,
+    explain_correct: "ARP übersetzt IP-Adressen in MAC-Adressen — das ist Schicht 2 (Data Link). MAC-Adressen sind physische Adressen und gehören zur Sicherungsschicht.",
+    explain_wrong: "Schicht 3 wäre IP/ICMP. Schicht 4 wäre TCP/UDP. ARP arbeitet im lokalen Netz auf Layer 2."
+  },
+  {
+    q: "Ein 1-Byte Modbus-Befehl hat 64 Byte Protokoll-Overhead. Wie hoch ist der Payload-Anteil in Prozent?",
+    opts: ["1,54%", "3,03%", "6,25%", "50%"],
+    correct: 1,
+    explain_correct: "2 Byte Payload / 66 Byte Gesamt × 100 = 3,03%. Das zeigt die enorme Ineffizienz bei kleinen Nachrichten!",
+    explain_wrong: "Die korrekte Formel: Payload / (Payload + Overhead) × 100 = 2/(2+64) × 100 = 3,03%"
+  },
+  {
+    q: "Warum nutzt KNXnet/IP Routing UDP statt TCP?",
+    opts: [
+      "Weil UDP schneller ist und Modbus TCP langweilig ist",
+      "Weil UDP Multicast unterstützt und TCP nur Unicast kann",
+      "Weil UDP zuverlässiger als TCP ist",
+      "Weil KNX auf Layer 1 arbeitet"
+    ],
+    correct: 1,
+    explain_correct: "UDP unterstützt Multicast (gleichzeitig an mehrere Empfänger). KNXnet/IP Routing sendet an die Multicast-Gruppe 224.0.23.12 — alle KNX-Geräte gleichzeitig. TCP kann kein Multicast!",
+    explain_wrong: "UDP ist nicht zuverlässiger. TCP ist zuverlässiger. Der entscheidende Grund ist Multicast-Fähigkeit."
+  },
+  {
+    q: "Welches QoS-Level sollte für Zählerstände (kWh zur Abrechnung) genutzt werden?",
+    opts: ["QoS 0 (At most once)", "QoS 1 (At least once)", "QoS 2 (Exactly once)", "QoS 3 (Ultra reliable)"],
+    correct: 2,
+    explain_correct: "QoS 2 garantiert genau einmalige Verarbeitung via 4-Wege-Handshake. Zählerstände dürfen weder verloren gehen noch doppelt gezählt werden — sonst falsche Abrechnung!",
+    explain_wrong: "QoS 0: Verlust möglich (fehlende kWh). QoS 1: Duplikat möglich (doppelte Abrechnung). QoS 3 gibt es bei MQTT nicht."
+  },
+  {
+    q: "Was bedeutet /32 in der CIDR-Notation?",
+    opts: ["Ein /24-Netz mit 32 Hosts", "Genau ein einzelnes Gerät", "Alle Geräte im Netz", "32 Bit Netzwerkanteil = Class A"],
+    correct: 1,
+    explain_correct: "/32 = 255.255.255.255 Subnetzmaske = kein Hostanteil mehr = genau ein einziges Gerät. Wichtig in Firewall-ACLs für spezifische Ausnahmen!",
+    explain_wrong: "/32 ist eine spezifische Host-Route, kein Netz mit mehreren Hosts."
+  },
+  {
+    q: "Welche Aussage über Stateful Inspection Firewalls ist korrekt?",
+    opts: [
+      "Jede Antwort braucht eine explizite Rückrichtungsregel",
+      "Antworten auf erlaubte ausgehende Verbindungen werden automatisch durchgelassen",
+      "Stateful bedeutet nur, dass die Firewall ihren Zustand speichert",
+      "Stateful Inspection gilt nur für UDP"
+    ],
+    correct: 1,
+    explain_correct: "Stateful Inspection merkt sich den Verbindungszustand. Wenn Regel X dem PC erlaubt auf Port 8123 zuzugreifen, lässt die Firewall die Antwort automatisch durch — keine separate Rückregel nötig!",
+    explain_wrong: "Das ist der Hauptvorteil von Stateful gegenüber Stateless Firewalls."
+  },
+  {
+    q: "Wie groß ist ein Standard-Modbus-Register?",
+    opts: ["8 Bit (INT8)", "16 Bit (INT16)", "32 Bit (INT32)", "64 Bit (INT64)"],
+    correct: 1,
+    explain_correct: "Ein Modbus-Register ist exakt 16 Bit groß (INT16, max. 65.535). Für größere Werte werden zwei Register zu INT32 kombiniert.",
+    explain_wrong: "Für INT32 braucht man 2 Register. Für 64 Bit bräuchte man 4 Register."
+  },
+  {
+    q: "Was passiert, wenn ein unmanaged Switch an einen Trunk-Port angeschlossen wird?",
+    opts: [
+      "Nur das native VLAN ist zugänglich",
+      "Alle VLANs sind für alle angeschlossenen Geräte zugänglich (VLAN Hopping)",
+      "Der Switch blockt alle Verbindungen",
+      "Nur VLAN 1 ist zugänglich"
+    ],
+    correct: 1,
+    explain_correct: "Ein unmanaged Switch ignoriert VLAN-Tags und leitet alle getaggten Frames weiter. Alle angeschlossenen Geräte befinden sich effektiv in allen VLANs — die Isolation ist aufgehoben!",
+    explain_wrong: "Unmanaged Switches können keine VLAN-Tags verarbeiten — sie leiten alles weiter."
+  },
+  {
+    q: "Ein Sensor löst einen Trigger aus (Regen beginnt). Der Trigger feuert nicht erneut. Was ist der wahrscheinliche Grund?",
+    opts: [
+      "Der Sensor ist defekt",
+      "Trigger reagieren auf Flanken, nicht auf dauernde Zustände",
+      "Das MQTT-Topic ist falsch konfiguriert",
+      "Die Condition ist FALSE"
+    ],
+    correct: 1,
+    explain_correct: "Trigger sind Flanken (Zustandswechsel). Der Regen-Sensor wechselt einmal von FALSE auf TRUE. Danach bleibt er TRUE — kein weiterer Zustandswechsel = kein weiterer Trigger!",
+    explain_wrong: "Das ist das klassische Flanken-Problem. Trigger = einmaliges Ereignis beim Wechsel."
+  },
+  {
+    q: "Schieflast: L1=-16A, L2=+6A, L3=+2A. Wie hoch ist die Schieflast?",
+    opts: ["14A", "18A", "22A", "8A"],
+    correct: 2,
+    explain_correct: "Schieflast = max − min = +6A − (−16A) = 22A. Dies überschreitet die VDE-AR-N 4100 Grenze von 20A!",
+    explain_wrong: "Einspeisung = negativer Bezug. max = +6, min = -16. Differenz = 6-(-16) = 22A"
+  },
+  {
+    q: "Welche Aussage über das Retain-Flag bei MQTT ist korrekt?",
+    opts: [
+      "Das Flag verhindert, dass Nachrichten verloren gehen (wie QoS 2)",
+      "Der Broker speichert den letzten Wert und sendet ihn sofort an neue Subscriber",
+      "Retain-Flag bedeutet, dass die Nachricht unbegrenzt oft gesendet wird",
+      "Es ist identisch mit QoS 1"
+    ],
+    correct: 1,
+    explain_correct: "Retain=TRUE: Der Broker speichert die letzte Nachricht. Wenn sich ein neuer Subscriber anmeldet, bekommt er sofort diesen letzten Wert — er muss nicht warten bis der Publisher wieder sendet.",
+    explain_wrong: "Retain und QoS sind unabhängige Konzepte. QoS = Übertragungszuverlässigkeit. Retain = Zwischenspeicherung."
+  },
+  {
+    q: "Was ist der Flaschenhals bei einem Batteriespeicher (20kWh, C=0.5, WR max. 4.6kW)?",
+    opts: [
+      "Die Batterie (10kW chemisch möglich)",
+      "Der Wechselrichter (4.6kW < 10kW Batterieleistung)",
+      "Die PV-Anlage",
+      "Es gibt keinen Flaschenhals"
+    ],
+    correct: 1,
+    explain_correct: "Batterie: 20kWh × 0.5C = 10kW möglich. Wechselrichter: max. 4.6kW. MIN(10, 4.6) = 4.6kW. Der Wechselrichter ist der Flaschenhals!",
+    explain_wrong: "Flaschenhals = immer der kleinere Wert. Hier ist 4.6kW < 10kW → WR limitiert."
+  },
+  {
+    q: "Warum funktioniert Cloud-Fernsteuerung ohne Port-Forwarding?",
+    opts: [
+      "Die Cloud hackt die Firewall",
+      "Die Middleware initiiert eine ausgehende Verbindung; Stateful Inspection lässt Rückantworten durch",
+      "Port 443 ist immer automatisch offen",
+      "Cloud-Anbieter haben spezielle Internet-Rechte"
+    ],
+    correct: 1,
+    explain_correct: "Die Middleware baut selbst eine ausgehende TCP/HTTPS-Verbindung zum Cloud-Server auf. Stateful Inspection merkt sich diese Verbindung und lässt automatisch den Rückverkehr durch — ohne explizite Eingangsregel.",
+    explain_wrong: "Es geht um das Prinzip der ausgehenden Verbindung + Stateful Inspection."
+  },
+  {
+    q: "Welche Schicht ist für IP-Routing zwischen verschiedenen Subnetzen zuständig?",
+    opts: ["Schicht 1", "Schicht 2", "Schicht 3", "Schicht 7"],
+    correct: 2,
+    explain_correct: "Schicht 3 (Network Layer) = IP-Adressen + Routing. Router arbeiten auf Layer 3 und verbinden verschiedene Subnetze. Layer 2 (Switch) kann nur im gleichen Subnetz arbeiten.",
+    explain_wrong: "Layer 2 = MAC/Switch = selbes Subnetz. Layer 3 = IP/Router = verschiedene Subnetze."
+  },
+  {
+    q: "Bei Big Endian: Register 40100=5, Register 40101=500. Welcher Wert ergibt sich für INT32?",
+    opts: ["328.180", "32.768.005", "327.180", "500.005"],
+    correct: 0,
+    explain_correct: "Wait — das ist Little Endian konfiguriert: 5 × 65.536 + 500 = 327.680 + 500 = 328.180. Bei Big Endian (500 als High): 500 × 65.536 + 5 = 32.768.005. Frage meinte: 5=High, 500=Low → 5×65536+500 = 328.180",
+    explain_wrong: "INT32: High × 65536 + Low. Wenn Reg1=5 High und Reg2=500 Low: 5×65536+500=328.180"
+  }
+];
+
+let quizAnswered = 0;
+let quizCorrect = 0;
+
+function buildQuiz() {
+  const container = document.getElementById('quizContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  quizData.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-q"><span class="q-num">F${i+1}</span>${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((opt, j) => `<button class="quiz-opt" onclick="answerQuiz(this, ${i}, ${j})">${opt}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qf${i}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function answerQuiz(btn, qi, oi) {
+  const q = quizData[qi];
+  const card = btn.closest('.quiz-card');
+  const opts = card.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qf' + qi);
+  
+  if (btn.classList.contains('disabled')) return;
+  
+  opts.forEach((o, j) => {
+    o.classList.add('disabled');
+    if (j === q.correct) o.classList.add('correct');
+    else if (j === oi && oi !== q.correct) o.classList.add('wrong');
+  });
+  
+  quizAnswered++;
+  const isCorrect = oi === q.correct;
+  if (isCorrect) quizCorrect++;
+  
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = isCorrect 
+    ? `<strong>✓ Richtig!</strong><br>${q.explain_correct}`
+    : `<strong>✗ Falsch.</strong><br>${q.explain_wrong}<br><br><em>Richtige Antwort: ${q.opts[q.correct]}</em>`;
+  
+  document.getElementById('quizScore').textContent = `Score: ${quizCorrect}/${quizAnswered} (${Math.round(quizCorrect/quizAnswered*100)}%)`;
+}
+
+function resetQuiz() {
+  quizAnswered = 0;
+  quizCorrect = 0;
+  document.getElementById('quizScore').textContent = 'Score: 0/0';
+  buildQuiz();
+}
+
+// === VOCAB DATA ===
+const vocabData = [
+  { term: "Troubleshooting", def: "Fehlersuche — systematisch von Schicht 1 nach oben (Bottom-Up).", example: "LED dunkel → Schicht 1 prüfen → Kabel defekt", trap: "Nicht Top-Down beim Troubleshooting!" },
+  { term: "Bottom-Up", def: "Fehlersuche beginnt bei Schicht 1 (Kabel/Physik).", example: "LED → Ping → Handshake → HTTP", trap: "Bottom-Up = von unten nach oben, NICHT anders!" },
+  { term: "3-Way-Handshake", def: "TCP-Verbindungsaufbau: SYN → SYN-ACK → ACK.", example: "Middleware verbindet sich mit Modbus-Gerät", trap: "UDP hat KEINEN Handshake!" },
+  { term: "Payload", def: "Nutzlast — die eigentlichen Informationen ohne Header.", example: "2 Byte Temperaturwert in einem 66-Byte Paket", trap: "Payload ≠ Gesamtpaketgröße!" },
+  { term: "Overhead", def: "Verwaltungsaufwand — Header-Daten, die kein Nutzinhalt sind.", example: "64 Byte Header bei 2 Byte Nutzdaten = 97% Overhead", trap: "Overhead ist nicht unnötig — er ist nötig für Protokollfunktion" },
+  { term: "Socket", def: "IP-Adresse + Port + Protokoll = eindeutige Verbindungsadresse.", example: "192.168.1.50:502/TCP für Modbus", trap: "IP allein reicht nicht! Port muss dazu." },
+  { term: "CIDR", def: "Classless Inter-Domain Routing — Schreibweise für Subnetzmaske.", example: "/24 = 255.255.255.0, /32 = einzelnes Gerät", trap: "/32 = ein Gerät, /24 = ganzes Netz" },
+  { term: "Broadcast", def: "Nachricht an ALLE Geräte im Netz (letzte Adresse: .255).", example: "192.168.10.255 = alle Geräte in 192.168.10.x", trap: "Broadcasts werden NICHT durch Router geleitet!" },
+  { term: "Gateway", def: "Router, der als Ausgang ins andere Netz dient.", example: "192.168.30.1 — Pakete in fremde Subnetze hier hin", trap: "Ohne Gateway kein Routing zwischen Subnetzen!" },
+  { term: "Polling", def: "Ständiges Abfragen: 'Gibt es Neuigkeiten?' — ineffizient.", example: "Modbus TCP: jede Minute 120 Regler abfragen", trap: "MQTT ersetzt Polling durch Event-System" },
+  { term: "MQTT-Broker", def: "Vermittler-Server, der alle MQTT-Nachrichten verteilt.", example: "Mosquitto, Home Assistant integriert", trap: "Publisher und Subscriber kommunizieren nie direkt!" },
+  { term: "QoS 0", def: "At most once — einmal senden, keine Bestätigung (wie UDP).", example: "Temperaturanzeige — verlorener Wert akzeptabel", trap: "NICHT für Abrechnungsdaten!" },
+  { term: "QoS 1", def: "At least once — mit PUBACK-Bestätigung, kann doppelt ankommen.", example: "Schaltstatus — Duplikat tolerierbar", trap: "Zählerstände brauchen QoS 2, nicht 1!" },
+  { term: "QoS 2", def: "Exactly once — 4-Wege-Handshake, garantiert einmalig.", example: "kWh-Zählerstand zur Abrechnung", trap: "Langsamster QoS, aber der einzig sichere für Zähler" },
+  { term: "Retain-Flag", def: "Broker speichert letzten Wert; neue Subscriber bekommen ihn sofort.", example: "App öffnet sich → sofort aktueller Wert sichtbar", trap: "Retain ≠ QoS! Beides unabhängig konfigurieren" },
+  { term: "Multicast", def: "Nachricht an eine definierte Gruppe — KNXnet/IP Routing.", example: "224.0.23.12:3671 — alle KNX-Geräte im Netz", trap: "TCP kann kein Multicast! → UDP für KNXnet/IP" },
+  { term: "ARP", def: "Address Resolution Protocol — löst IP in MAC auf (Layer 2).", example: "PC fragt: Wer hat 192.168.1.50? → bekommt MAC-Adresse", trap: "ARP = Layer 2, nicht Layer 3!" },
+  { term: "VLAN", def: "Virtuelles LAN — trennt Netzwerke logisch auf einem Switch (802.1Q).", example: "VLAN 10 (Privat), VLAN 20 (IoT) — ein Switch, getrennte Netze", trap: "Trunk-Port an unmanaged Switch = Sicherheitslücke!" },
+  { term: "Access-Port", def: "Switch-Port für Endgeräte — untagged, ein VLAN.", example: "PC, Middleware, Kamera", trap: "Endgerät weiß nichts von VLANs!" },
+  { term: "Trunk-Port", def: "Switch-Port für Infrastruktur — getaggt, mehrere VLANs.", example: "Router, Multi-SSID Access-Point", trap: "Nur an managed Geräte! Nie an normale PCs." },
+  { term: "ACL", def: "Access Control List — Firewall-Regelwerk (Top-Down).", example: "ALLOW 10.0.10.0/24 → 10.0.20.50/32 TCP/8123", trap: "Top-Down: erste passende Regel gewinnt!" },
+  { term: "Stateful Inspection", def: "Firewall merkt sich Verbindungszustand — Antworten automatisch durch.", example: "Erlaubte Anfrage → Antwort braucht keine eigene Regel", trap: "Stateless braucht explizite Rückregel!" },
+  { term: "DNAT / Port Forwarding", def: "Weiterleitung von WAN-Port an interne IP — Sicherheitsrisiko!", example: "Port 502 (Modbus) → 192.168.1.50 — Angreifer haben Schreibzugriff!", trap: "Modbus hat KEINE Passwortauthentifizierung!" },
+  { term: "Self-Signed Cert.", def: "Selbst erstelltes Zertifikat — verschlüsselt, aber keine CA-Identität.", example: "https://192.168.1.50 → rote Browser-Warnung", trap: "Trotz Warnung: Daten sind VERSCHLÜSSELT!" },
+  { term: "Certificate Authority", def: "Offizielle Zertifizierungsstelle — bestätigt Identität.", example: "Let's Encrypt für example.com (nicht für IPs!)", trap: "CAs stellen keine Zertifikate für private IPs aus!" },
+  { term: "WireGuard", def: "Modernes VPN-Protokoll auf UDP-Basis.", example: "Smartphone → UDP 51820 → Heimrouter → internes LAN", trap: "WireGuard nutzt UDP, nicht TCP!" },
+  { term: "TCA-Modell", def: "Trigger → Condition → Action — Grundstruktur jeder Automatisierung.", example: "T: PIR TRUE / C: <50Lux / A: Licht AN", trap: "Trigger = Flanke! Nicht dauernder Zustand." },
+  { term: "Flanke", def: "Zustandswechsel — FALSE→TRUE oder TRUE→FALSE.", example: "Regen beginnt = Flanke FALSE→TRUE", trap: "Nach der Flanke kein erneuter Trigger ohne neue Flanke!" },
+  { term: "Hysterese", def: "Totband zwischen Ein- und Ausschaltschwelle — verhindert Schwingen.", example: "EIN >3000W, AUS <1000W (nicht <3000W!)", trap: "Hysterese muss ≥ Verbraucherleistung sein!" },
+  { term: "Flapping", def: "Schnelles An/Ausschalten durch Feedback-Loop ohne Hysterese.", example: "Heizstab schaltet im Sekundentakt", trap: "Lösung: Hysterese einbauen!" },
+  { term: "C-Rate", def: "Lade-/Entladerate relativ zur Kapazität.", example: "20kWh × 0.5C = 10kW max Entladeleistung", trap: "C-Rate × kWh = kW (Leistung, nicht Energie!)" },
+  { term: "Schieflast", def: "Phasendifferenz am Netzanschlusspunkt — max. 20A (VDE-AR-N 4100).", example: "L1=-16A, L2=+6A → Schieflast = 22A (Verstoß!)", trap: "Einspeisung = negativer Bezug!" },
+  { term: "Endianness", def: "Reihenfolge der Register bei Modbus INT32.", example: "Big: Reg1=High×65536+Reg2; Little: Reg2=High×65536+Reg1", trap: "Falsches Endian → absurde Millionen-Werte!" },
+  { term: "Peak Shaving", def: "Reduzierung des Leistungsspitzenwertes im 15-Min-Intervall.", example: "P_rest = (Ziel−Bisherige) / Restzeit", trap: "Einheit kWmin (Arbeitsintegral), nicht kW×h!" },
+  { term: "RLM-Zähler", def: "Registrierende Leistungsmessung — jede 15 min Mittelwert.", example: "Industrie zahlt nach höchstem 15-Min-Wert des Jahres!", trap: "Einmal Limit überschritten = teurer Jahrestarif!" },
+  { term: "Single Point of Failure", def: "Eine Komponente, deren Ausfall das ganze System stilllegt.", example: "Middleware-Server fällt aus → keine PV-Steuerung mehr", trap: "KNX-Taster funktioniert ohne Middleware weiter!" },
+  { term: "Silo-Problem", def: "Systeme (KNX, Modbus, Zigbee) arbeiten isoliert — keine Integration.", example: "PV kann Jalousie nicht steuern ohne Middleware", trap: "Middleware ist Single Point of Failure!" },
+  { term: "High Word", def: "Das führende 16-Bit-Register bei INT32 (Multiplikator × 65.536).", example: "Wert = 5: 5 × 65536 = 327.680", trap: "Welches Register High ist: Endian-abhängig!" },
+  { term: "Low Word", def: "Das nachfolgende 16-Bit-Register bei INT32 (Rest nach Multiplikation).", example: "Wert = 500: wird direkt addiert", trap: "Low Word ist der 'Rest', nicht immer kleiner!" },
+  { term: "PDU", def: "Protocol Data Unit — Datenpaket auf einer bestimmten Schicht.", example: "Layer 4: Segment, Layer 3: Paket, Layer 2: Frame", trap: "Jede Schicht hat eigenen PDU-Namen!" }
+];
+
+function buildVocab() {
+  const grid = document.getElementById('vocabGrid');
+  if (!grid) return;
+  grid.innerHTML = vocabData.map(v => `
+    <div class="vocab-item">
+      <div class="vocab-term">${v.term}</div>
+      <div class="vocab-def">${v.def}</div>
+      <div class="vocab-example">💡 ${v.example}</div>
+      <div class="vocab-trap">⚠️ ${v.trap}</div>
+    </div>
+  `).join('');
+}
+
+function filterVocab(val) {
+  const grid = document.getElementById('vocabGrid');
+  if (!grid) return;
+  const items = grid.querySelectorAll('.vocab-item');
+  items.forEach(item => {
+    item.style.display = item.textContent.toLowerCase().includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// === LEARN MODE ===
+const learnCards = [
+  { q: "Was bedeutet Bottom-Up bei der Fehlersuche?", a: "Man beginnt bei Schicht 1 (Kabel/Physik) und arbeitet sich nach oben vor — nicht umgekehrt!" },
+  { q: "Was ist ein Socket? Nenne die drei Bestandteile.", a: "Socket = IP-Adresse + Port + Protokoll. Beispiel: 192.168.1.50:502/TCP" },
+  { q: "Welcher Layer ist für IP-Adressen zuständig?", a: "Layer 3 — Network (Netzwerkschicht). IP ist logische Adressierung." },
+  { q: "Welcher Layer ist für MAC-Adressen zuständig?", a: "Layer 2 — Data Link (Sicherungsschicht). MAC ist physische Adressierung." },
+  { q: "Netzwerkadresse und Broadcast von 192.168.10.50/24?", a: "Netzwerkadresse: 192.168.10.0 (letzter Block = 0)\nBroadcast: 192.168.10.255 (letzter Block = 255)" },
+  { q: "Warum braucht man einen Router zwischen 192.168.30.x und 192.168.40.x?", a: "Verschiedene Subnetze (30 ≠ 40). Switch kennt nur MAC-Adressen im selben Subnetz. Router (Layer 3) verbindet verschiedene Subnetze." },
+  { q: "Was macht das Retain-Flag bei MQTT?", a: "Der Broker speichert den letzten Wert. Neue Subscriber bekommen ihn sofort beim Abonnieren — ohne auf die nächste Änderung zu warten." },
+  { q: "Welches QoS-Level für Abrechnungs-Zählerstände (kWh)?", a: "QoS 2 — Exactly once. Weder verloren gehen (zu niedrige Abrechnung) noch doppelt zählen (zu hohe Abrechnung)." },
+  { q: "Formel für Peak Shaving P_rest?", a: "P_rest = (Ziel-Arbeit − Bisherige_Arbeit) / Verbleibende_Zeit\nZiel-Arbeit = Limit_kW × 15 Minuten" },
+  { q: "Was ist der Flaschenhals beim Batteriespeicher?", a: "MIN(chemische DC-Leistung via C-Rate, Wechselrichter-AC-Limit). Immer der kleinere Wert!" },
+  { q: "Formel: Schieflastberechnung mit L1=-16A, L2=+6A, L3=+2A", a: "Schieflast = max − min = +6 − (−16) = 22A → VERSTOSS! (Grenze: 20A)" },
+  { q: "Was ist der Endianness-Fehler bei Modbus INT32?", a: "Big Endian: Reg1 = High×65536 + Reg2. Little Endian: Reg2 = High×65536 + Reg1. Falsches Setting → Millionenwerte!" },
+  { q: "Was ist VLAN Hopping und wie passiert es?", a: "Unmanaged Switch an Trunk-Port = alle getaggten Frames werden unverarbeitet weitergeleitet → alle VLANs zugänglich für alle Geräte!" },
+  { q: "Warum funktioniert Cloud-Steuerung ohne Port-Forwarding?", a: "Middleware baut ausgehende TCP/HTTPS-Verbindung auf. Stateful Inspection lässt Rückantworten durch (Verbindung von innen initiiert)." },
+  { q: "TCA-Modell: Was ist der Unterschied zwischen Trigger und Condition?", a: "Trigger = Flanke (einmaliger Zustandswechsel). Condition = statischer Zustand (TRUE/FALSE zum Zeitpunkt des Triggers)." },
+  { q: "Warum ist Polling ineffizient? Wie rechnet man es?", a: "120 Regler × 1/min × 66 Byte = ständige Netzwerklast auch ohne Änderungen.\nPayload-Anteil = 2/66 × 100 = 3,03%" },
+];
+
+let learnIndex = 0;
+const learnStatus = {};
+
+function buildLearnMode() {
+  const c = document.getElementById('learnContainer');
+  if (!c) return;
+  renderLearnCard(c);
+}
+
+function renderLearnCard(c) {
+  const card = learnCards[learnIndex % learnCards.length];
+  const total = learnCards.length;
+  c.innerHTML = `
+    <div class="learn-progress"><div class="learn-progress-bar" style="width:${(learnIndex/total)*100}%"></div></div>
+    <div class="learn-counter">Karte ${(learnIndex % total) + 1} von ${total} | 
+      ✓ ${Object.values(learnStatus).filter(v=>v==='know').length} gelernt | 
+      ↩ ${Object.values(learnStatus).filter(v=>v==='repeat').length} wiederholen | 
+      ★ ${Object.values(learnStatus).filter(v=>v==='exam').length} prüfungsrelevant</div>
+    <div class="learn-card">
+      <div class="learn-q">${card.q}</div>
+      <button class="learn-a-btn" onclick="toggleLearnAnswer(this)">Antwort anzeigen</button>
+      <div class="learn-answer" id="learnAns">${card.a.replace(/\n/g,'<br>')}</div>
+      <div class="learn-btns">
+        <button class="learn-btn-know" onclick="learnNext('know')">✓ Ich kann das</button>
+        <button class="learn-btn-repeat" onclick="learnNext('repeat')">↩ Nochmal</button>
+        <button class="learn-btn-exam" onclick="learnNext('exam')">★ Prüfungsrelevant</button>
+      </div>
+    </div>
+    ${learnIndex > 0 && Object.values(learnStatus).filter(v=>v==='exam').length > 0 ? `
+    <div style="margin-top:1.5rem;padding:1rem;background:rgba(227,179,65,0.08);border:1px solid rgba(227,179,65,0.25);border-radius:8px;">
+      <div style="font-size:0.8rem;color:var(--gold);font-weight:700;margin-bottom:0.5rem;">★ Prüfungsrelevant markiert:</div>
+      ${Object.entries(learnStatus).filter(([,v])=>v==='exam').map(([k])=>`<div style="font-size:0.78rem;color:var(--text2);padding:0.2rem 0;">• ${learnCards[parseInt(k)].q}</div>`).join('')}
+    </div>` : ''}
+  `;
+}
+
+function toggleLearnAnswer(btn) {
+  const ans = document.getElementById('learnAns');
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Antwort verbergen' : 'Antwort anzeigen';
+}
+
+function learnNext(status) {
+  learnStatus[learnIndex % learnCards.length] = status;
+  learnIndex++;
+  buildLearnMode();
+}
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+  buildQuiz();
+  buildVocab();
+  buildLearnMode();
+});
+
+
+// ═══════════════════════════════════════════════════════
+//  PROBEKLAUSUR — TAB-SYSTEM & KLAUSUR-SIMULATION
+// ═══════════════════════════════════════════════════════
+
+// ── Tab switching ──
+function pkSwitchTab(tab, btn) {
+  document.querySelectorAll('.pk-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pk-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pk-' + tab).classList.add('active');
+}
+
+// ── Exam data ──
+const PK_TIME = 90 * 60;
+const pkSections = [
+  { title:'Teil 1 — Netzwerk & OSI', pts:20, qs:['p1','p2','p3','p4','p5','p6'] },
+  { title:'Teil 2 — Automatisierungslogik', pts:25, qs:['p7','p8','p9','p10','p11'] },
+  { title:'Teil 3 — Energiemanagement', pts:30, qs:['p12','p13','p14','p15','p16'] },
+  { title:'Teil 4 — IT-Sicherheit', pts:25, qs:['p17','p18','p19','p20','p21','p22'] }
+];
+const pkQ = {
+  p1:{type:'mc',pts:4,text:'Eine Middleware verliert alle 30 Sekunden die Verbindung. Ein neuer Smart-TV hat manuell dieselbe IP 192.168.1.50 wie die Middleware erhalten.\n\nWelches Layer-2-Protokoll ist verantwortlich?',
+    opts:['ICMP — Ping schlägt fehl und unterbricht die Verbindung','ARP — beide Geräte antworten auf Adressauflösung und überschreiben sich im Switch-Cache','TCP — der 3-Way-Handshake bricht durch den IP-Konflikt ab','DHCP — die IP-Adresse wird doppelt vergeben'],
+    correct:1,explain:'ARP (Layer 2) löst IP→MAC auf. Beide Geräte antworten auf ARP-Broadcasts → Switch-Cache wird abwechselnd überschrieben → Pakete landen zufällig am TV oder der Middleware → Abbruch alle ~30 Sek.'},
+  p2:{type:'mc',pts:3,text:'Wireshark: SYN gesendet, kein SYN-ACK empfangen.\nWelcher OSI-Layer?',
+    opts:['Layer 1 — Physical','Layer 2 — Data Link','Layer 3 — Network','Layer 4 — Transport (TCP)'],
+    correct:3,explain:'SYN→SYN-ACK→ACK = TCP-3-Way-Handshake = Layer 4 (Transport). Problem auf Layer 4: Firewall, geschlossener Port oder überlastete Gegenstelle.'},
+  p3:{type:'mc',pts:3,text:'PC (10.0.10.5) kann Middleware (10.0.20.50) pingen, aber nicht KNX-Router (10.0.20.100). Switchport leuchtet. Firewall erlaubt VLAN 10 → 20.\n\nWahrscheinlichste Ursache auf Layer 3?',
+    opts:['Kabel des KNX-Routers defekt (Layer 1)','Firewall blockiert trotz korrekter Regel','Kein Standard-Gateway am KNX-Router konfiguriert — Antwortpakete an 10.0.10.x werden verworfen','Falsche Subnetzmaske am KNX-Router'],
+    correct:2,explain:'Pakete vom PC kommen an. Aber KNX-Router weiß nicht, wohin Antworten an 10.0.10.5 (anderes Subnetz). Fehlendes Gateway → Antwort verworfen. Layer 3 Problem.'},
+  p4:{type:'mc',pts:3,text:'KNXnet/IP Routing zwischen zwei Gebäuden über IT-Router funktioniert nicht.\n\nWas ist die korrekte Erklärung?',
+    opts:['TCP-Unicast wird durch NAT blockiert','UDP-Multicast (224.0.23.12) wird von Standard-IT-Routern nicht weitergeleitet','Port 8123 fehlt in der Firewall','Fehlende VLAN-Tags auf dem Trunk-Port'],
+    correct:1,explain:'KNXnet/IP Routing nutzt UDP-Multicast 224.0.23.12:3671. Standard-Router leiten Multicast nicht weiter — Multicast-Routing (IGMP-Proxy/PIM) muss explizit konfiguriert werden.'},
+  p5:{type:'mc',pts:3,text:'Subnetz: 172.16.5.0/24\n\nWelche IP ist die Broadcast-Adresse?',
+    opts:['172.16.5.0','172.16.5.1','172.16.5.254','172.16.5.255'],
+    correct:3,explain:'Bei /24: letzter Oktett = 255 → 172.16.5.255. Broadcast sendet gleichzeitig an alle 254 Hosts im Subnetz.'},
+  p6:{type:'mc',pts:4,text:'Modbus-TCP-Paket: 2 Byte Payload, 64 Byte Overhead.\nWie hoch ist der prozentuale Payload-Anteil?',
+    opts:['50,00 %','6,25 %','3,03 %','1,56 %'],
+    correct:2,explain:'(2 / 66) × 100 = 3,03 %. Nur 3% sind Nutzdaten — 97% Overhead. Das zeigt die Ineffizienz von Modbus-Polling.'},
+  p7:{type:'mc',pts:5,text:'Außenbeleuchtung:\n• Trigger: PIR wechselt auf TRUE\n• Condition: Helligkeit < 50 Lux\n• Action: Licht AN\n\n17:00 Uhr: 60 Lux, PIR → TRUE (Licht geht nicht an ✓). PIR bleibt TRUE. 17:15: 40 Lux.\n\nGeht das Licht um 17:15 an?',
+    opts:['Ja — Condition erfüllt (40 < 50), Regel greift','Nein — Trigger ist Flanke. PIR ist schon TRUE, keine neue Flanke → kein Trigger.','Ja — Trigger und Condition werden ständig neu bewertet','Nein — außerhalb der Betriebszeit'],
+    correct:1,explain:'TRIGGER = Flanke (einmaliger Wechsel). Um 17:00 feuerte er einmalig. PIR bleibt TRUE → keine neue Flanke → kein erneuter Trigger → Licht bleibt aus. Lösung: zweiten Trigger hinzufügen.'},
+  p8:{type:'mc',pts:5,text:'Jalousie: (Alarm OR Sonne) AND NOT(Fenster_offen)\nAlarm=0, Sonne=1, Fenster=0\n\nFährt die Jalousie ab?',
+    opts:['Ja — (0 OR 1) AND NOT(0) = 1 AND 1 = TRUE','Nein — Alarm ist unscharf','Nein — beide OR-Eingänge müssen TRUE sein','Ja — nur wenn Alarm scharf'],
+    correct:0,explain:'(0 OR 1)=1, NOT(0)=1, 1 AND 1 = TRUE → Jalousie fährt ab. OR bedeutet: Alarm ODER Sonne reicht.'},
+  p9:{type:'mc',pts:5,text:'EIN: Überschuss > 1500W → Heizstab (2000W) AN\nAUS: Überschuss < 1500W → AUS\n\nÜberschuss springt auf 3000W. Was passiert?',
+    opts:['Heizstab bleibt stabil an (3000 > 1500)','Heizstab EIN → zieht 2000W → Überschuss 1000W < 1500 → AUS → steigt → EIN → Flapping/Relais klackert','Heizstab schaltet nach Mindestlaufzeit','System erkennt Loop automatisch'],
+    correct:1,explain:'Feedback-Loop: EIN → 2000W → Überschuss 1000W → AUS → steigt → EIN → Relais klackert! Lösung: Hysterese (EIN > 3000W, AUS < 1000W).'},
+  p10:{type:'mc',pts:5,text:'Welche Aussage über das TCA-Modell ist korrekt?',
+    opts:['Trigger ist ein dauerhafter Zustand','Condition ist eine Flanke','Trigger = Flanke (Zustandswechsel), Condition = statischer Zustand (TRUE/FALSE)','Action und Trigger sind identisch'],
+    correct:2,explain:'TRIGGER = Flanke (weckt Regel einmalig auf). CONDITION = statischer Zustand zum Zeitpunkt des Triggers. ACTION = Befehl wenn T feuert UND C TRUE.'},
+  p11:{type:'mc',pts:5,text:'Dachfenster: Trigger "Regen beginnt". Öffnen bei Regen → keine automatische Schließung. Lösung?',
+    opts:['Trigger auf dauerhaften Zustand umstellen','Zweiten Trigger: Fensterkontakt öffnet sich + Condition: Regen == TRUE','Nachlaufzeit erhöhen','Condition auf NOT(Fenster_offen) ändern'],
+    correct:1,explain:'"Regen beginnt" feuert nur einmal. Beim späteren Öffnen gibt es keine neue Regen-Flanke. Zweiter Trigger "Fenster öffnet sich" + Condition "Regen == TRUE" löst das Problem.'},
+  p12:{type:'mc',pts:5,text:'Smart Meter: L1 = −16 A, L2 = +6 A, L3 = +2 A\nSchieflastgrenze: 20 A (VDE-AR-N 4100)\n\nAktuelle Schieflast und Normverstoß?',
+    opts:['8 A — kein Verstoß (nur positive Werte)','22 A — Normverstoß! (Einspeisung = negativer Bezug)','14 A — kein Verstoß','18 A — kein Verstoß'],
+    correct:1,explain:'Schieflast = max − min = (+6) − (−16) = 22 A. Einspeisung = negativer Wert! 22 A > 20 A → NORMVERSTOSS.'},
+  p13:{type:'mc',pts:5,text:'Gleiche Ausgangslage (22A Schieflast). Wallbox lädt 10A auf L1.\n\nNeue Schieflast?',
+    opts:['32 A — wird schlimmer','22 A — keine Änderung','12 A — Wallbox verbessert die Lage!','26 A — knapp über Grenze'],
+    correct:2,explain:'Neu L1 = −16+10 = −6A. Neue Schieflast = (+6)−(−6) = 12A ✓. Wallbox REDUZIERT die Schieflast durch Kompensation der Einspeisung!'},
+  p14:{type:'calc',pts:8,text:'Niedervoltspeicher: 48 V · 300 Ah · C-Rate 0,5 · WR-Limit: 4.600 W',
+    fields:[
+      {key:'kap',label:'① Energiekapazität in kWh',placeholder:'U × Ah ÷ 1000 = ... kWh',hint:'Kapazität (kWh) = V × Ah ÷ 1000'},
+      {key:'dc', label:'② Max. DC-Leistung via C-Rate (kW)',placeholder:'kWh × C-Rate = ... kW',hint:'DC-Leistung = kWh × C-Rate'},
+      {key:'ac', label:'③ Nutzbare AC + Flaschenhals',placeholder:'MIN(... , 4,6 kW) = ... kW — Flaschenhals: ...',hint:'Nutzbare AC = MIN(DC, WR-Limit)'}
+    ],
+    correct:{kap:'14,4',dc:'7,2',ac:'4,6'},
+    explain:'① 48×300÷1000 = 14,4 kWh  ② 14,4×0,5 = 7,2 kW  ③ MIN(7,2;4,6) = 4,6 kW. Flaschenhals: Wechselrichter (4,6 kW < 7,2 kW).'},
+  p15:{type:'calc',pts:7,text:'Peak Shaving — Limit: 250 kW (15-Min-Mittelwert)\nMin 0–5: 300 kW · Min 5–10: 200 kW',
+    fields:[
+      {key:'ziel', label:'① Ziel-Arbeit (kWmin)',placeholder:'250 × 15 = ... kWmin',hint:'W = P × t'},
+      {key:'bis',  label:'② Bisherige Arbeit nach 10 min (kWmin)',placeholder:'300×5 + 200×5 = ... kWmin',hint:'Arbeit = Leistung × Zeit'},
+      {key:'prest',label:'③ Max. Restleistung letzte 5 min (kW)',placeholder:'(... − ...) ÷ 5 = ... kW',hint:'P_rest = (Ziel − Bisherig) ÷ Restzeit'}
+    ],
+    correct:{ziel:'3750',bis:'2500',prest:'250'},
+    explain:'① 250×15=3750 kWmin  ② 300×5+200×5=2500 kWmin  ③ (3750−2500)÷5=250 kW'},
+  p16:{type:'mc',pts:5,text:'Reg 40100=500, Reg 40101=5. Big Endian konfiguriert → Dashboard: 32.768.005 Wh.\n\nFehler und Korrektur?',
+    opts:['Big Endian korrekt — 32.768.005 Wh ist der richtige Wert','Gerät sendet Little Endian. Korrekt: 5×65.536+500 = 328.180 Wh → Word Swap einstellen','Register-Adressen vertauscht','Gerät hat einen Hardwaredefekt'],
+    correct:1,explain:'Big Endian: 500×65536+5=32.768.005 Wh (unrealistisch!). Gerät sendet Little Endian: 5×65536+500=328.180 Wh=328 kWh ✓. Lösung: "Word Swap" in der Middleware.'},
+  p17:{type:'mc',pts:4,text:'Home-Assistant-Middleware an Port 12. VLAN 20 (IoT).\nRichtige Switch-Port-Konfiguration?',
+    opts:['Trunk-Port, VLANs 10+20+30','Access-Port, VLAN 20','Trunk-Port, nur VLAN 20','Access-Port, VLAN 10'],
+    correct:1,explain:'Endgeräte → Access-Port! Switch taggt intern mit VLAN 20. Trunk-Ports nur für Infrastruktur (Router, Multi-SSID-AP).'},
+  p18:{type:'mc',pts:5,text:'Firewall (Top-Down, Default DROP):\nRegel 1: ALLOW 10.0.20.50/32 → WAN Port 443\nRegel 2: ALLOW 10.0.20.0/24 → WAN Port 443\nRegel 3: DROP ANY\n\nFehler + warum Regel 1 überflüssig?',
+    opts:['Regel 3 fehlt Portangabe','Regel 2 erlaubt dem GANZEN IoT-Netz Internet-Zugang. Regel 1 überflüssig, da 10.0.20.50 ∈ 10.0.20.0/24 (Top-Down: Regel 2 trifft zuerst)','Reihenfolge falsch','Beide Regeln haben denselben Fehler'],
+    correct:1,explain:'Regel 2 trifft bereits auf Middleware (ist Teil von /24) → Regel 1 nie relevant. Schwerer Fehler: Alle 254 IoT-Geräte dürfen HTTPS ins Internet. Lösung: Regel 2 löschen.'},
+  p19:{type:'mc',pts:4,text:'Port 502 per DNAT freigegeben. Botnetz scannt 300 Ports/Sek (65.536 Ports).\n\nWie lange bis Port gefunden? Warum gefährlich?',
+    opts:['218 Minuten — moderates Risiko','3,6 Minuten — und Modbus hat keine Passwortauthentifizierung → sofortiger Schreibzugriff','36 Minuten — Zeit für Gegenmaßnahmen','1 Stunde — akzeptabel mit starkem Passwort'],
+    correct:1,explain:'65.536÷300=218 Sek≈3,6 Min. Modbus TCP hat KEINE Authentifizierung → wer Port findet, kann sofort Relais schalten und Heizung manipulieren!'},
+  p20:{type:'mc',pts:4,text:'Browser zeigt rote Warnung bei https://10.0.20.50:8123.\nKunde: "Unverschlüsselt!" — Stimmt das?',
+    opts:['Ja — ohne CA-Zertifikat keine Verschlüsselung','Nein — Daten 100% verschlüsselt. Warnung = Identität nicht durch CA bestätigt (CAs stellen keine Zertifikate für private IPs aus)','Nur teilweise verschlüsselt','Let\'s Encrypt muss installiert werden'],
+    correct:1,explain:'Self-Signed = vollständig verschlüsselt! Warnung bedeutet nur: keine CA-Identitätsbestätigung. CAs stellen keine Zertifikate für 10.x/192.168.x aus — nur für registrierte Domains.'},
+  p21:{type:'mc',pts:4,text:'Kein DNAT geöffnet — Cloud steuert Middleware trotzdem.\n\nWelcher Mechanismus?',
+    opts:['Cloud hat spezielle Internet-Rechte','Middleware baut ausgehende TCP/HTTPS-Verbindung auf — Stateful Inspection lässt Rückantworten automatisch durch','Port 443 ist immer bidirektional offen','Router öffnet temporäre Ports automatisch (UPnP)'],
+    correct:1,explain:'Middleware öffnet ausgehende TCP/TLS-Verbindung (Port 443) zum Cloud-Server. Stateful Inspection: von innen initiiert → Rückantworten erlaubt. Kein Loch in Firewall nötig!'},
+  p22:{type:'mc',pts:4,text:'Port 8 = Trunk. Kunde steckt Unmanaged-Switch rein (Laptop + Pool-Pumpe).\n\nWas passiert?',
+    opts:['Nur VLAN 1 erreichbar — VLAN-Trennung bleibt','Laptop kann nur Pool-Pumpe erreichen','Unmanaged Switch leitet alle Tags weiter → Laptop + Pool-Pumpe in ALLEN VLANs (VLAN Hopping)','Trunk-Port blockiert unbekannte Geräte automatisch'],
+    correct:2,explain:'VLAN Hopping: Unmanaged Switch ignoriert 802.1Q-Tags → alle Frames an alle Ports → alle Geräte in allen VLANs. Gesamte VLAN-Segmentierung aufgehoben!'}
+};
+
+// ── State ──
+let pkSecs=PK_TIME, pkTimer=null, pkAns={}, pkName='', pkRunning=false;
+
+function pkBeginExam(){
+  pkName=document.getElementById('pkNameInp').value.trim()||'Teilnehmer/in';
+  pkSecs=PK_TIME; pkAns={}; pkRunning=true;
+  document.getElementById('pk-start-view').style.display='none';
+  document.getElementById('pk-running-view').style.display='block';
+  document.getElementById('pk-results-view').style.display='none';
+  pkBuildExam();
+  pkStartTimer();
+  window.scrollTo(0,0);
+}
+
+function pkBuildExam(){
+  const body=document.getElementById('pkBody');
+  const nav=document.getElementById('pkQNav');
+  body.innerHTML=''; nav.innerHTML='';
+  let idx=0;
+  pkSections.forEach(sec=>{
+    const sd=document.createElement('div');
+    sd.className='pk-sec-hd';
+    sd.innerHTML=`<h3>${sec.title}</h3><span class="sp">${sec.pts} Punkte</span>`;
+    body.appendChild(sd);
+    sec.qs.forEach(qid=>{
+      idx++;
+      const q=pkQ[qid];
+      // nav dot
+      const dot=document.createElement('div');
+      dot.className='pk-qdot'; dot.id='pd_'+qid; dot.textContent=idx;
+      dot.onclick=()=>document.getElementById('pc_'+qid).scrollIntoView({behavior:'smooth',block:'start'});
+      nav.appendChild(dot);
+      // card
+      const card=document.createElement('div');
+      card.className='pk-qcard'; card.id='pc_'+qid;
+      const tl=q.type==='mc'?'Multiple Choice':'Rechenaufgabe';
+      const tc=q.type==='mc'?'mc':'rc';
+      card.innerHTML=`<div class="pk-qcard-head">
+        <span class="pk-qnum">F${idx}</span>
+        <span class="pk-qtype ${tc}">${tl}</span>
+        <div class="pk-qtext">${q.text}</div>
+        <span class="pk-qpts">${q.pts} Pkt</span>
+      </div>`;
+      if(q.type==='mc'){
+        const b=document.createElement('div'); b.className='pk-qbody';
+        b.innerHTML='<div class="pk-opts">'+q.opts.map((o,i)=>`<div class="pk-opt" id="po_${qid}_${i}" onclick="pkSelMC('${qid}',${i})"><span class="pk-ok">${'ABCD'[i]}</span>${o}</div>`).join('')+'</div>';
+        card.appendChild(b);
+      } else {
+        const b=document.createElement('div'); b.className='pk-qbody';
+        b.innerHTML='<div class="pk-calc-area">'+q.fields.map(f=>`<div class="pk-calc-f"><div class="pk-calc-lbl">${f.label}</div><input class="pk-calc-inp" id="pi_${qid}_${f.key}" placeholder="${f.placeholder}" autocomplete="off" oninput="pkMarkCalc('${qid}')"><div class="pk-calc-hint">${f.hint}</div></div>`).join('')+'</div>';
+        card.appendChild(b);
+      }
+      body.appendChild(card);
+    });
+  });
+}
+
+function pkSelMC(qid,i){
+  if(!pkRunning)return;
+  pkQ[qid].opts.forEach((_,j)=>{const e=document.getElementById('po_'+qid+'_'+j);if(e)e.classList.remove('sel');});
+  const e=document.getElementById('po_'+qid+'_'+i);if(e)e.classList.add('sel');
+  pkAns[qid]=i;
+  document.getElementById('pc_'+qid).classList.add('answered');
+  const d=document.getElementById('pd_'+qid);if(d)d.classList.add('ans');
+  pkUpdCount();
+}
+function pkMarkCalc(qid){
+  if(!pkRunning)return;
+  const has=pkQ[qid].fields.some(f=>{const e=document.getElementById('pi_'+qid+'_'+f.key);return e&&e.value.trim();});
+  if(has){document.getElementById('pc_'+qid).classList.add('answered');const d=document.getElementById('pd_'+qid);if(d)d.classList.add('ans');if(!pkAns[qid])pkAns[qid]='p';}
+  pkUpdCount();
+}
+function pkUpdCount(){document.getElementById('pkAnswered').textContent=Object.keys(pkAns).length+' / 22 beantwortet';}
+
+function pkStartTimer(){
+  pkTimer=setInterval(()=>{pkSecs--;pkRenderTimer();if(pkSecs<=0){clearInterval(pkTimer);pkTimeUp();}},1000);
+}
+function pkRenderTimer(){
+  const m=Math.floor(pkSecs/60),s=pkSecs%60;
+  const n=document.getElementById('pkTimerNum'),f=document.getElementById('pkTimerFill');
+  n.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  f.style.width=(pkSecs/PK_TIME*100)+'%';
+  if(pkSecs<=300){n.className='pk-timer-num danger';f.className='pk-timer-fill danger';}
+  else if(pkSecs<=900){n.className='pk-timer-num warn';f.className='pk-timer-fill warn';}
+}
+function pkTimeUp(){
+  pkRunning=false;
+  document.getElementById('pkModalTitle').textContent='⏰ Zeit abgelaufen!';
+  document.getElementById('pkModalText').textContent='Deine 90 Minuten sind um. Die Klausur wird jetzt ausgewertet.';
+  document.querySelector('.pk-modal-btns').innerHTML='<button class="pk-modal-ok" onclick="pkDoSubmit()">Auswertung anzeigen →</button>';
+  document.getElementById('pkModal').classList.add('show');
+}
+function pkConfirmSubmit(){
+  document.getElementById('pkModalTitle').textContent='Klausur abgeben?';
+  document.getElementById('pkModalText').textContent='Möchtest du jetzt abgeben? Du siehst danach alle Lösungen.';
+  document.querySelector('.pk-modal-btns').innerHTML='<button class="pk-modal-ok" onclick="pkDoSubmit()">Ja, abgeben ✓</button><button class="pk-modal-cancel" onclick="pkHideModal()">Weiter schreiben</button>';
+  document.getElementById('pkModal').classList.add('show');
+}
+function pkHideModal(){document.getElementById('pkModal').classList.remove('show');}
+
+function pkDoSubmit(){
+  clearInterval(pkTimer); pkRunning=false; pkHideModal();
+  Object.keys(pkQ).forEach(qid=>{
+    const q=pkQ[qid];
+    if(q.type==='calc'){const o={};q.fields.forEach(f=>{const e=document.getElementById('pi_'+qid+'_'+f.key);o[f.key]=e?e.value.trim():'';});pkAns[qid]=o;}
+  });
+  let total=0,earned=0; const res={};
+  Object.keys(pkQ).forEach(qid=>{
+    const q=pkQ[qid]; total+=q.pts; let pts=0;
+    if(q.type==='mc'){if(pkAns[qid]===q.correct)pts=q.pts;}
+    else{const a=pkAns[qid];if(a&&typeof a==='object'){let ok=0;q.fields.forEach(f=>{const gv=(a[f.key]||'').replace(/\s/g,'').replace(',','.');const ev=(q.correct[f.key]||'').replace(',','.');const gn=parseFloat(gv),en=parseFloat(ev);if(!isNaN(gn)&&!isNaN(en)&&Math.abs(gn-en)<0.15)ok++;});pts=Math.round((ok/q.fields.length)*q.pts);}}
+    earned+=pts; res[qid]={pts,ok:pts===q.pts};
+  });
+  // Update nav dots
+  Object.keys(pkQ).forEach(qid=>{const d=document.getElementById('pd_'+qid);if(d){d.classList.remove('ans');d.classList.add(res[qid].ok?'ok':'bad');}});
+  pkBuildResults(earned,total,res);
+  document.getElementById('pk-running-view').style.display='none';
+  document.getElementById('pk-results-view').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function pkBuildResults(earned,total,res){
+  const pct=Math.round(earned/total*100), pass=earned>=50;
+  const tm=Math.floor((PK_TIME-pkSecs)/60), ts=(PK_TIME-pkSecs)%60;
+  const gs=[[92,'1 — Sehr gut'],[81,'2 — Gut'],[67,'3 — Befriedigend'],[50,'4 — Ausreichend'],[30,'5 — Mangelhaft'],[0,'6 — Ungenügend']];
+  const grade=gs.find(g=>pct>=g[0])[1];
+  const msgs={'1':'Ausgezeichnet! 🏆','2':'Sehr gut! 🎉','3':'Gut gemacht! 👍','4':'Bestanden ✓','5':'Weiter üben! 💪','6':'Grundlagen wiederholen! 📚'};
+  const msg=msgs[grade.split('—')[0].trim()]||'';
+  let html=`<div class="pk-result-hero ${pass?'pass':'fail'}">
+    <div class="pk-rpts ${pass?'pass':'fail'}">${earned} / ${total}</div>
+    <div class="pk-rgrade">Note ${grade} &nbsp;·&nbsp; ${pct}%</div>
+    <div class="pk-rmsg">${msg}</div>
+    <div class="pk-rname">${pkName} &nbsp;·&nbsp; ${String(tm).padStart(2,'0')}:${String(ts).padStart(2,'0')} min</div>
+  </div>
+  <div class="pk-rgrid">
+    <div class="pk-rchip"><div class="pk-rchip-n" style="color:${pass?'var(--accent2)':'var(--warn)'}">${earned}</div><div class="pk-rchip-l">Punkte</div></div>
+    <div class="pk-rchip"><div class="pk-rchip-n">${pct}%</div><div class="pk-rchip-l">Ergebnis</div></div>
+    <div class="pk-rchip"><div class="pk-rchip-n">${tm}min</div><div class="pk-rchip-l">Bearbeitet</div></div>
+  </div>`;
+  let gi=0;
+  pkSections.forEach(sec=>{
+    let se=0; sec.qs.forEach(qid=>se+=res[qid].pts);
+    html+=`<div class="pk-sec-res"><div class="pk-sec-res-hd"><h3>${sec.title}</h3><span class="pk-sec-res-score" style="color:${se>=sec.pts*.5?'var(--accent2)':'var(--warn)'}">${se}/${sec.pts} Pkt</span></div>`;
+    sec.qs.forEach(qid=>{
+      gi++;
+      const q=pkQ[qid],r=res[qid];
+      const ic=q.type==='calc'?(r.pts===q.pts?'ok':r.pts>0?'partial':'bad'):(r.ok?'ok':'bad');
+      const ch=ic==='partial'?'±':(r.ok?'✓':'✗');
+      html+=`<div class="pk-qr-item"><div class="pk-qr-row"><div class="pk-qr-ico ${ic}">${ch}</div><div class="pk-qr-txt">F${gi}: ${q.text.split('\n')[0].substring(0,72)}…<span class="pk-qr-pts">${r.pts}/${q.pts} Pkt</span></div></div>`;
+      if(q.type==='mc'){
+        const g=pkAns[qid];
+        if(!r.ok)html+=`<div class="pk-qr-ans"><div class="pk-qr-yours">✗ Deine Antwort: (${g!==undefined?'ABCD'[g]:'–'}) ${g!==undefined?(q.opts[g]||'').substring(0,60):'Keine Antwort'}</div><div class="pk-qr-right">✓ Richtig: (${'ABCD'[q.correct]}) ${q.opts[q.correct].substring(0,60)}</div></div>`;
+        else html+=`<div class="pk-qr-ans"><div class="pk-qr-right">✓ (${'ABCD'[q.correct]}) ${q.opts[q.correct].substring(0,60)}</div></div>`;
+      } else {
+        const a=pkAns[qid];
+        if(a&&typeof a==='object'){html+='<div class="pk-qr-ans">';q.fields.forEach(f=>{const gv=a[f.key]||'(leer)',ev=q.correct[f.key],gn=parseFloat((gv||'').replace(',','.')),en=parseFloat(ev.replace(',','.'));const fo=!isNaN(gn)&&!isNaN(en)&&Math.abs(gn-en)<0.15;html+=`<div style="color:${fo?'var(--accent2)':'var(--warn)'}">${fo?'✓':'✗'} ${f.label}: <strong>${gv}</strong> | Erwartet: <strong style="color:var(--accent2)">${ev}</strong></div>`;});html+='</div>';}
+      }
+      html+=`<div class="pk-qr-exp">${q.explain.replace(/\n/g,'<br>')}</div></div>`;
+    });
+    html+='</div>';
+  });
+  html+=`<button class="pk-retry-btn" onclick="pkRetry()">🔄 Neue Klausur starten</button>`;
+  document.getElementById('pkResultsWrap').innerHTML=html;
+}
+
+function pkRetry(){
+  clearInterval(pkTimer); pkSecs=PK_TIME; pkAns={}; pkRunning=false;
+  document.getElementById('pk-results-view').style.display='none';
+  document.getElementById('pk-running-view').style.display='none';
+  document.getElementById('pkResultsWrap').innerHTML='';
+  document.getElementById('pkTimerNum').className='pk-timer-num';
+  document.getElementById('pkTimerNum').textContent='90:00';
+  document.getElementById('pkTimerFill').style.width='100%';
+  document.getElementById('pkTimerFill').className='pk-timer-fill';
+  document.getElementById('pk-start-view').style.display='block';
+  window.scrollTo(0,0);
+}
+</script>
+
+
+</body>
+</html>
