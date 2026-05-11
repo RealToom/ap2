@@ -1,4 +1,4 @@
-const CACHE = 'ap2-v3';
+const CACHE = 'ap2-v4';
 const FILES = [
   './',
   './index.html',
