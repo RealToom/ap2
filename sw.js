@@ -1,7 +1,9 @@
-const CACHE = 'ap2-v1';
+const CACHE = 'ap2-v2';
 const FILES = [
   './',
   './index.html',
+  './karten.html',
+  './wallbox.html',
   './style.css',
   './manifest.json',
   './js/app.js',

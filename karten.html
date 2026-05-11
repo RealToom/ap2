@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>AP2 Lernapp</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AP2" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <script>document.documentElement.dataset.theme = localStorage.getItem('ap2_theme') || 'dark';</script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <span class="header-title">AP2 Lernapp</span>
+    <span class="header-streak" id="streak-display">🔥 0 Tage</span>
+    <span class="header-due" id="due-display">0 fällig</span>
+    <button class="btn-theme" id="btn-theme">☀️</button>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar">
+      <!-- Themen werden hier per JS eingefügt -->
+    </nav>
+    <main class="main" id="main">
+      <!-- Aktive View wird hier eingefügt -->
+    </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+  </script>
+</body>
+</html>

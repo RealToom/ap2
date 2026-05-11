@@ -1,40 +1,192 @@
 <!DOCTYPE html>
-<html lang="de" data-theme="dark">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>AP2 Lernapp</title>
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="AP2" />
-  <meta name="theme-color" content="#1a1a2e" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <script>document.documentElement.dataset.theme = localStorage.getItem('ap2_theme') || 'dark';</script>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AP2 Lernportal</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AP2">
+<meta name="theme-color" content="#0d1117">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #58a6ff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+header p {
+  font-size: 0.8rem;
+  color: var(--text2);
+  margin-top: 0.2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card:active {
+  transform: scale(0.97);
+}
+
+.card:hover {
+  border-color: var(--accent);
+  background: var(--bg3);
+}
+
+.card.disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+.card-icon {
+  font-size: 2.2rem;
+  width: 3rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.card-body h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+
+.card-body p {
+  font-size: 0.78rem;
+  color: var(--text2);
+  line-height: 1.4;
+}
+
+.badge {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+
+.badge.new {
+  background: #1a3a1a;
+  border-color: #2ea043;
+  color: #3fb950;
+}
+</style>
 </head>
 <body>
-  <header class="header">
-    <span class="header-title">AP2 Lernapp</span>
-    <span class="header-streak" id="streak-display">🔥 0 Tage</span>
-    <span class="header-due" id="due-display">0 fällig</span>
-    <button class="btn-theme" id="btn-theme">☀️</button>
-  </header>
 
-  <div class="layout">
-    <nav class="sidebar" id="sidebar">
-      <!-- Themen werden hier per JS eingefügt -->
-    </nav>
-    <main class="main" id="main">
-      <!-- Aktive View wird hier eingefügt -->
-    </main>
+<header>
+  <h1>AP2 Lernportal</h1>
+  <p>Wähle ein Fach oder einen Lehrer</p>
+</header>
+
+<div class="grid">
+
+  <a class="card" href="karten.html">
+    <span class="card-icon">📊</span>
+    <div class="card-body">
+      <h2>WBL</h2>
+      <p>Wirtschafts- und Betriebslehre<br>Karteikarten & Lernmodus</p>
+    </div>
+    <span class="badge new">App</span>
+  </a>
+
+  <a class="card" href="wallbox.html">
+    <span class="card-icon">⚡</span>
+    <div class="card-body">
+      <h2>Kudelka</h2>
+      <p>Wallbox, Energiewende<br>§14a EnWG</p>
+    </div>
+    <span class="badge new">Neu</span>
+  </a>
+
+  <div class="card disabled">
+    <span class="card-icon">🔌</span>
+    <div class="card-body">
+      <h2>Sentker</h2>
+      <p>Kommt bald</p>
+    </div>
+    <span class="badge">Bald</span>
   </div>
 
-  <script type="module" src="js/app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
-  </script>
+  <div class="card disabled">
+    <span class="card-icon">📐</span>
+    <div class="card-body">
+      <h2>Marx</h2>
+      <p>Kommt bald</p>
+    </div>
+    <span class="badge">Bald</span>
+  </div>
+
+  <div class="card disabled">
+    <span class="card-icon">🛠️</span>
+    <div class="card-body">
+      <h2>Hato</h2>
+      <p>Kommt bald</p>
+    </div>
+    <span class="badge">Bald</span>
+  </div>
+
+</div>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
 </body>
 </html>
