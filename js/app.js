@@ -7,98 +7,211 @@ import { renderFreetext } from './freetext.js';
 import { loadProgress } from './storage.js';
 import { getDueCount, getStreak } from './sm2.js';
 
-let activeThemaId = null;
+let activeId = null;
+
+const COLLAPSED_KEY = 'ap2_collapsed';
+function loadCollapsed() {
+  try { return new Set(JSON.parse(localStorage.getItem(COLLAPSED_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveCollapsed(set) {
+  localStorage.setItem(COLLAPSED_KEY, JSON.stringify([...set]));
+}
+let collapsedFaecher = loadCollapsed();
+
+// --- Hilfsfunktionen ---
+
+function alleThemen() {
+  return cardsData.faecher.flatMap(f => f.themen);
+}
+
+function alleKarten() {
+  return alleThemen().flatMap(t => t.karten);
+}
+
+function findThema(id) {
+  for (const fach of cardsData.faecher) {
+    const t = fach.themen.find(t => t.id === id);
+    if (t) return t;
+  }
+  return null;
+}
+
+function elektroKarten() {
+  return cardsData.faecher.filter(f => f.id !== 'wbl').flatMap(f => f.themen.flatMap(t => t.karten));
+}
+
+function resolveSelection(id) {
+  if (id === 'alle') {
+    return { id: 'alle', name: 'Alle Karten', karten: alleKarten() };
+  }
+  if (id === 'elektro') {
+    return { id: 'elektro', name: 'Elektro Allgemein', karten: elektroKarten() };
+  }
+  if (id.startsWith('fach:')) {
+    const fachId = id.slice(5);
+    const fach = cardsData.faecher.find(f => f.id === fachId);
+    if (!fach) return null;
+    return { id, name: 'Alle ' + fach.name, karten: fach.themen.flatMap(t => t.karten) };
+  }
+  return findThema(id);
+}
+
+// --- Init ---
 
 function init() {
   setupThemeToggle();
-  renderSidebar();
   updateHeader();
 
-  if (cardsData.themen.length > 0) {
-    selectThema(cardsData.themen[0].id);
-  }
+  const firstThema = cardsData.faecher[0]?.themen[0];
+  if (firstThema) select(firstThema.id);
+  else renderSidebar();
 }
 
-function setupThemeToggle() {
-  const btn = document.getElementById('btn-theme');
-  btn.addEventListener('click', () => {
-    const html = document.documentElement;
-    const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
-    html.dataset.theme = next;
-    btn.textContent = next === 'dark' ? '☀️' : '🌙';
-    localStorage.setItem('ap2_theme', next);
-  });
-  const saved = localStorage.getItem('ap2_theme') || 'dark';
-  document.documentElement.dataset.theme = saved;
-  btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+// --- Selektion ---
+
+function select(id) {
+  activeId = id;
+  renderSidebar();
+  const thema = resolveSelection(id);
+  if (!thema) return;
+  renderDashboard(thema, { onMode: startMode });
 }
 
-function renderSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.innerHTML = '';
-  const progress = loadProgress(); // single read, not inside loop
+export function startMode(thema, modus) {
+  const done = () => { updateHeader(); select(thema.id); };
+  if (modus === 'flip') renderFlip(thema, { onDone: done });
+  if (modus === 'mc') renderMultipleChoice(thema, { onDone: done });
+  if (modus === 'freitext') renderFreetext(thema, { onDone: done });
+}
 
-  for (const thema of cardsData.themen) {
-    const themaProgress = getThemaProgress(thema, progress);
+// --- Sidebar ---
 
-    const item = document.createElement('button');
-    item.type = 'button';
-    item.className = 'sidebar-item' + (thema.id === activeThemaId ? ' active' : '');
-    item.dataset.id = thema.id;
+function getProgress(karten, progress) {
+  const gesamt = karten.length;
+  const gelernt = karten.filter(k => (progress[k.id]?.wiederholungen ?? 0) >= 3).length;
+  return { gesamt, gelernt, prozent: gesamt ? Math.round((gelernt / gesamt) * 100) : 0 };
+}
 
-    const nameEl = document.createElement('div');
-    nameEl.className = 'sidebar-item-name';
-    nameEl.textContent = thema.name; // textContent, no XSS
+function makeSidebarItem(id, name, karten, progress, indent) {
+  const p = getProgress(karten, progress);
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'sidebar-item' + (id === activeId ? ' active' : '') + (indent ? ' sidebar-item--indent' : '');
 
-    const progressEl = document.createElement('div');
-    progressEl.className = 'sidebar-item-progress';
-    progressEl.textContent = `${themaProgress.gelernt}/${themaProgress.gesamt} gelernt`;
+  const nameEl = document.createElement('span');
+  nameEl.className = 'sidebar-item-name';
+  nameEl.textContent = name;
+  btn.appendChild(nameEl);
+
+  if (karten.length > 0) {
+    const meta = document.createElement('span');
+    meta.className = 'sidebar-item-meta';
+    meta.textContent = `${p.gelernt}/${p.gesamt}`;
+    btn.appendChild(meta);
 
     const barOuter = document.createElement('div');
     barOuter.className = 'progress-bar';
     const barFill = document.createElement('div');
     barFill.className = 'progress-bar-fill';
-    barFill.style.width = themaProgress.prozent + '%';
+    barFill.style.width = p.prozent + '%';
     barOuter.appendChild(barFill);
+    btn.appendChild(barOuter);
+  } else {
+    const empty = document.createElement('span');
+    empty.className = 'sidebar-item-meta sidebar-item-empty';
+    empty.textContent = 'leer';
+    btn.appendChild(empty);
+  }
 
-    item.appendChild(nameEl);
-    item.appendChild(progressEl);
-    item.appendChild(barOuter);
+  btn.addEventListener('click', () => select(id));
+  return btn;
+}
 
-    item.addEventListener('click', () => selectThema(thema.id));
-    sidebar.appendChild(item);
+function renderSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = '';
+  const progress = loadProgress();
+  const karten = alleKarten();
+
+  // Alle Karten + Filter
+  if (karten.length > 0) {
+    sidebar.appendChild(makeSidebarItem('alle', 'Alle Karten', karten, progress, false));
+    sidebar.appendChild(makeSidebarItem('fach:wbl', 'WBL', cardsData.faecher.find(f => f.id === 'wbl')?.themen.flatMap(t => t.karten) ?? [], progress, true));
+    sidebar.appendChild(makeSidebarItem('elektro', 'Elektro Allgemein', elektroKarten(), progress, true));
+    const div = document.createElement('div');
+    div.className = 'sidebar-divider';
+    sidebar.appendChild(div);
+  }
+
+  // Fächer
+  for (const fach of cardsData.faecher) {
+    const fachKarten = fach.themen.flatMap(t => t.karten);
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'sidebar-fach' + ('fach:' + fach.id === activeId ? ' active' : '');
+
+    const fachName = document.createElement('span');
+    fachName.textContent = fach.name;
+    header.appendChild(fachName);
+
+    if (fachKarten.length > 0) {
+      const badge = document.createElement('span');
+      badge.className = 'sidebar-fach-badge';
+      badge.textContent = fachKarten.length;
+      header.appendChild(badge);
+    }
+
+    const arrow = document.createElement('span');
+    arrow.className = 'sidebar-fach-arrow';
+    const isCollapsed = collapsedFaecher.has(fach.id);
+    arrow.textContent = isCollapsed ? '▸' : '▾';
+    header.appendChild(arrow);
+
+    const themesDiv = document.createElement('div');
+    themesDiv.className = 'sidebar-themes';
+    if (isCollapsed) themesDiv.classList.add('sidebar-themes--collapsed');
+
+    for (const thema of fach.themen) {
+      themesDiv.appendChild(makeSidebarItem(thema.id, thema.name, thema.karten, progress, true));
+    }
+
+    header.addEventListener('click', () => {
+      if (collapsedFaecher.has(fach.id)) {
+        collapsedFaecher.delete(fach.id);
+      } else {
+        collapsedFaecher.add(fach.id);
+      }
+      saveCollapsed(collapsedFaecher);
+      select('fach:' + fach.id);
+    });
+    sidebar.appendChild(header);
+    sidebar.appendChild(themesDiv);
   }
 }
 
-function getThemaProgress(thema, progress) {
-  const gesamt = thema.karten.length;
-  const gelernt = thema.karten.filter(k => {
-    const p = progress[k.id];
-    return p && p.wiederholungen >= 3;
-  }).length;
-  return { gesamt, gelernt, prozent: gesamt ? Math.round((gelernt / gesamt) * 100) : 0 };
-}
+// --- Header ---
 
 function updateHeader() {
   const progress = loadProgress();
-  const alleKarten = cardsData.themen.flatMap(t => t.karten);
-  document.getElementById('due-display').textContent =
-    getDueCount(alleKarten, progress) + ' fällig';
-  document.getElementById('streak-display').textContent =
-    '🔥 ' + getStreak(progress) + ' Tage';
+  const karten = alleKarten();
+  document.getElementById('due-display').textContent = getDueCount(karten, progress) + ' fällig';
+  document.getElementById('streak-display').textContent = '🔥 ' + getStreak(progress) + ' Tage';
 }
 
-export function selectThema(themaId) {
-  activeThemaId = themaId;
-  renderSidebar();
-  const thema = cardsData.themen.find(t => t.id === themaId);
-  renderDashboard(thema, { onMode: startMode });
-}
+function setupThemeToggle() {
+  const btn = document.getElementById('btn-theme');
+  const saved = localStorage.getItem('ap2_theme') || 'dark';
+  document.documentElement.dataset.theme = saved;
+  btn.textContent = saved === 'dark' ? '☀️' : '🌙';
 
-export function startMode(thema, modus) {
-  if (modus === 'flip') renderFlip(thema, { onDone: () => { updateHeader(); selectThema(thema.id); } });
-  if (modus === 'mc') renderMultipleChoice(thema, { onDone: () => { updateHeader(); selectThema(thema.id); } });
-  if (modus === 'freitext') renderFreetext(thema, { onDone: () => { updateHeader(); selectThema(thema.id); } });
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    btn.textContent = next === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('ap2_theme', next);
+  });
 }
 
 init();

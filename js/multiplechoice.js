@@ -20,7 +20,20 @@ export function renderMultipleChoice(thema, { onDone }) {
 
   function renderFrage() {
     const karte = stapel[index];
-    const optionen = shuffle([karte.antwort, ...karte.falschantworten]);
+
+    // Optionen als Objekte aufbauen: {text, erklaerung, isCorrect}
+    const falsch = (karte.falschantworten || []).map(f =>
+      typeof f === 'object'
+        ? { text: f.text, erklaerung: f.erklaerung, isCorrect: false }
+        : { text: f, erklaerung: 'Diese Antwort ist falsch.', isCorrect: false }
+    );
+    const richtig = {
+      text: karte.antwort_mc || karte.antwort,
+      erklaerung: karte.erklaerung || '✓ Das ist die richtige Antwort.',
+      isCorrect: true
+    };
+    const optionen = shuffle([richtig, ...falsch]);
+
     const main = document.getElementById('main');
     main.innerHTML = `
       <div class="card-session">
@@ -33,32 +46,53 @@ export function renderMultipleChoice(thema, { onDone }) {
           <div class="karte-text" id="mc-frage"></div>
           <div class="mc-optionen" id="mc-optionen">
             ${optionen.map((o, i) => `
-              <button class="mc-option" data-index="${i}" data-richtig="${o === karte.antwort}">
-                ${String.fromCharCode(65 + i)}) <span class="mc-option-text"></span>
-              </button>`).join('')}
+              <div class="mc-option-wrap" data-i="${i}">
+                <button class="mc-option" data-index="${i}">
+                  ${String.fromCharCode(65 + i)}) <span class="mc-option-text"></span>
+                </button>
+                <div class="mc-erklaerung hidden" id="mc-erkl-${i}"></div>
+              </div>`).join('')}
           </div>
         </div>
       </div>`;
 
-    // XSS-safe: set all text content after innerHTML
     document.getElementById('mc-frage').textContent = karte.frage;
     document.querySelectorAll('.mc-option-text').forEach((span, i) => {
-      span.textContent = optionen[i];
+      span.textContent = optionen[i].text;
     });
 
     document.getElementById('btn-abbrechen').addEventListener('click', onDone);
-    document.querySelectorAll('.mc-option').forEach(btn => {
+
+    document.querySelectorAll('.mc-option').forEach((btn, i) => {
       btn.addEventListener('click', () => {
-        const richtig = btn.dataset.richtig === 'true';
-        // Disable all buttons and color them
-        document.querySelectorAll('.mc-option').forEach(b => {
+        const gewählt = optionen[i];
+
+        document.querySelectorAll('.mc-option').forEach((b, j) => {
           b.disabled = true;
-          if (b.dataset.richtig === 'true') b.classList.add('mc-correct');
+          const opt = optionen[j];
+          if (opt.isCorrect) b.classList.add('mc-correct');
           else b.classList.add('mc-wrong');
+
+          const erkl = document.getElementById('mc-erkl-' + j);
+          erkl.classList.remove('hidden');
+          if (opt.isCorrect) {
+            erkl.className = 'mc-erklaerung mc-erkl-correct';
+            erkl.textContent = '✓ ' + opt.erklaerung;
+          } else {
+            erkl.className = 'mc-erklaerung mc-erkl-wrong';
+            erkl.textContent = '✗ ' + opt.erklaerung;
+          }
         });
-        setTimeout(() => {
+
+        const mcCard = document.querySelector('.mc-card');
+        const weiterBtn = document.createElement('button');
+        weiterBtn.className = 'btn btn-primary mc-weiter';
+        weiterBtn.textContent = 'Weiter →';
+        mcCard.appendChild(weiterBtn);
+
+        weiterBtn.addEventListener('click', () => {
           const p = loadProgress();
-          const neuerState = berechneIntervall(p[karte.id] || {}, richtig ? 1 : 0);
+          const neuerState = berechneIntervall(p[karte.id] || {}, gewählt.isCorrect ? 1 : 0);
           saveCardProgress(karte.id, neuerState);
           index++;
           if (index >= stapel.length) {
@@ -71,7 +105,7 @@ export function renderMultipleChoice(thema, { onDone }) {
           } else {
             renderFrage();
           }
-        }, 1200);
+        });
       });
     });
   }
